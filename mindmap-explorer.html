@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The 2028 Crisis — Cognitive Exploration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Caveat', cursive;
+            background: #f5f1e8;
+            overflow: hidden;
+            cursor: none;
+            transition: background 1.5s ease;
+        }
+
+        body.enlightened {
+            background: #fdfcfa;
+            cursor: default !important;
+        }
+
+        body.enlightened .flashlight {
+            opacity: 0 !important;
+        }
+
+        /* Paper texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.02) 2px, rgba(0,0,0,.02) 3px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,.02) 2px, rgba(0,0,0,.02) 3px);
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        #canvas {
+            display: block;
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Custom cursor (flashlight) */
+        .flashlight {
+            position: fixed;
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(255, 200, 100, 0.8);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+            transition: transform 0.1s ease;
+            box-shadow: 0 0 20px rgba(255, 200, 100, 0.5);
+        }
+
+        .flashlight::after {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            border-radius: 50%;
+            background: rgba(255, 200, 100, 0.3);
+        }
+
+        /* Progress indicator */
+        .progress-container {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            text-align: center;
+        }
+
+        .progress-bar {
+            width: 300px;
+            height: 8px;
+            background: rgba(100, 80, 60, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid rgba(100, 80, 60, 0.3);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #d4a574, #c9986a);
+            width: 0%;
+            transition: width 0.6s ease;
+            box-shadow: 0 0 10px rgba(212, 165, 116, 0.5);
+        }
+
+        .progress-text {
+            margin-top: 8px;
+            font-size: 20px;
+            color: #6b5d4f;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: color 1s ease;
+        }
+
+        body.enlightened .progress-text {
+            color: #4a3f35;
+        }
+
+        /* Instructions */
+        .instructions {
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 100;
+            opacity: 1;
+            transition: opacity 1s ease;
+        }
+
+        .instructions.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .instructions-title {
+            font-size: 42px;
+            color: #4a3f35;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 0 rgba(255,255,255,0.5);
+            transition: color 1s ease, text-shadow 1s ease;
+        }
+
+        .instructions-subtitle {
+            font-size: 24px;
+            color: #8b7865;
+            font-weight: 500;
+            transition: color 1s ease;
+        }
+
+        body.enlightened .instructions-title {
+            color: #2a2520;
+            text-shadow: 1px 1px 0 rgba(255,255,255,0.3);
+        }
+
+        body.enlightened .instructions-subtitle {
+            color: #6b5d4f;
+        }
+
+        /* Legend */
+        .legend {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid rgba(100, 80, 60, 0.3);
+            z-index: 100;
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .legend-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #4a3f35;
+            margin-bottom: 12px;
+            text-decoration: underline;
+            text-decoration-style: wavy;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 18px;
+            color: #6b5d4f;
+        }
+
+        .legend-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid currentColor;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: fixed;
+            background: rgba(255, 252, 245, 0.98);
+            border: 3px solid #8b7865;
+            border-radius: 12px;
+            padding: 20px 24px;
+            max-width: 500px;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.15);
+        }
+
+        .tooltip.visible {
+            opacity: 1;
+        }
+
+        .tooltip-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: #4a3f35;
+            margin-bottom: 8px;
+        }
+
+        .tooltip-description {
+            font-size: 18px;
+            line-height: 1.5;
+            color: #6b5d4f;
+        }
+
+        /* Controls */
+        .controls {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 100;
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 3px solid #6b5d4f;
+            border-radius: 8px;
+            font-family: 'Caveat', cursive;
+            font-size: 20px;
+            font-weight: 700;
+            color: #4a3f35;
+            cursor: pointer;
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div class="flashlight" id="flashlight"></div>
+
+    <div class="controls">
+        <button class="btn" id="exportBtn">Download Map</button>
+    </div>
+
+    <div class="instructions" id="instructions">
+        <div class="instructions-title">Explore the Map</div>
+        <div class="instructions-subtitle">Move your cursor to illuminate hidden knowledge</div>
+    </div>
+
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText">0% Discovered</div>
+    </div>
+
+    <div class="legend">
+        <div class="legend-title">Map Key</div>
+        <div class="legend-item">
+            <div class="legend-dot" style="color: #b8860b;"></div>
+            <span>Timeline (Past)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="color: #8b4513;"></div>
+            <span>Root Causes</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="color: #2f4f4f;"></div>
+            <span>Central Crisis</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="color: #cd5c5c;"></div>
+            <span>Consequences</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="color: #228b22;"></div>
+            <span>Solutions</span>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip">
+        <div class="tooltip-title" id="tooltipTitle"></div>
+        <div class="tooltip-description" id="tooltipDescription"></div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Setup canvas
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Camera/viewport for panning
+        let cameraX = 0;
+        let cameraY = 0;
+        const panSpeed = 12; // Increased from 5 for faster edge panning
+        const panEdgeThreshold = 100; // pixels from edge to trigger pan
+
+        // Data structure
+        const mapData = {
+            center: {
+                id: 'center',
+                type: 'center',
+                label: '2028\nAI Crisis',
+                description: 'The Global Intelligence Crisis represents the structural breaking of the income-to-consumption cycle as AI capability advancement eliminates white-collar employment faster than the economy can adjust. Multiple simultaneous pathways—labor displacement, business model collapse, financial contagion, and prime borrower income shock—converge into systemic economic collapse by 2028.',
+                x: canvas.width / 2,
+                y: canvas.height / 2,
+                size: 80,
+                color: '#2f4f4f',
+                leaves: [
+                    {
+                        title: 'Income-to-consumption cycle breaks',
+                        description: 'Fundamental economic cycle - wages fund consumption which funds business revenue - breaks down as AI eliminates jobs faster than new employment emerges. Production continues but income distribution fails.'
+                    },
+                    {
+                        title: 'White-collar elimination outpaces adjustment',
+                        description: 'AI capabilities advance faster than workers can retrain or economy can absorb displaced labor. Unlike previous automation waves, transition speed exceeds human and institutional adaptation capacity.'
+                    },
+                    {
+                        title: 'Labor displacement spiral',
+                        description: 'Self-reinforcing cycle where AI adoption drives job loss, which reduces spending, which pressures companies to adopt more AI. Each loop accelerates the next with no natural equilibrium.'
+                    },
+                    {
+                        title: 'Business model collapse',
+                        description: 'AI agents eliminate monetizable friction across commerce, destroying business models built on consumer inertia. Subscriptions, renewals, intermediation all optimized away by autonomous agents.'
+                    },
+                    {
+                        title: 'Financial contagion spreads',
+                        description: 'Software company debt defaults trigger insurance company capital crisis. "Permanent capital" architecture funding private credit proves fragile when asset values collapse simultaneously.'
+                    },
+                    {
+                        title: 'Prime borrower income shock',
+                        description: 'Previously bulletproof 780+ FICO borrowers face structural income impairment. Mortgages underwritten on 30-year employment stability fail as white-collar skills become obsolete.'
+                    }
+                ],
+                expanded: false
+            },
+            timeline: [
+                {
+                    id: 'timeline-1',
+                    type: 'timeline',
+                    label: '2026\nThreshold',
+                    description: 'Agentic coding tools achieve step-function capability improvements. Enterprise software faces disruption as companies realize they can replicate mid-market SaaS functionality internally. ServiceNow announces workforce reduction, triggering recognition that AI-threatened incumbents become aggressive AI adopters to protect margins. White-collar layoffs accelerate throughout the year.',
+                    relativeX: 0,
+                    relativeY: -280,
+                    size: 65,
+                    color: '#b8860b',
+                    leaves: [
+                        {
+                            title: 'Agentic coding tools achieve capability breakthrough',
+                            description: 'AI coding assistants reach step-function improvements, enabling autonomous software development with minimal human oversight. Code generation quality crosses threshold for production use.'
+                        },
+                        {
+                            title: 'Enterprise SaaS replication becomes viable',
+                            description: 'Companies realize they can replicate mid-market SaaS functionality internally using AI tools, eliminating need for expensive subscriptions. In-house development becomes cheaper than licensing.'
+                        },
+                        {
+                            title: 'ServiceNow workforce reduction signals shift',
+                            description: 'ServiceNow announces significant workforce reduction, triggering market-wide recognition that AI-threatened incumbents will aggressively adopt AI to protect margins rather than slow transition.'
+                        },
+                        {
+                            title: 'AI-threatened incumbents accelerate AI adoption',
+                            description: 'Software companies facing AI disruption choose to accelerate rather than resist automation, creating paradox where threatened firms become most aggressive adopters, amplifying displacement.'
+                        },
+                        {
+                            title: 'White-collar layoffs accelerate',
+                            description: 'Job cuts in software engineering, customer service, data analysis, and knowledge work accelerate throughout 2026 as AI capabilities reach automation threshold across multiple white-collar sectors.'
+                        }
+                    ],
+                    expanded: false
+                },
+                {
+                    id: 'timeline-2',
+                    type: 'timeline',
+                    label: '2027\nAcceleration',
+                    description: 'LLM usage becomes ubiquitous. Consumer agents handle commerce decisions autonomously, routing around payment infrastructure and collapsing intermediation-dependent business models. Private credit software loans begin defaulting, particularly the Zendesk facility. White-collar displaced workers flood service sectors, compressing wages economy-wide. Initial jobless claims surge to 487,000. The economy enters recession with two consecutive quarters of negative real GDP growth.',
+                    relativeX: 0,
+                    relativeY: -480,
+                    size: 65,
+                    color: '#b8860b',
+                    leaves: [
+                        {
+                            title: 'LLM usage becomes ubiquitous',
+                            description: 'Large language models achieve mainstream adoption across consumer and enterprise applications. AI interfaces become default for information access, commerce, and service interactions.'
+                        },
+                        {
+                            title: 'Consumer agents collapse intermediation models',
+                            description: 'Autonomous consumer agents handle commerce decisions, routing around payment infrastructure and subscription renewals. Business models dependent on consumer inertia and friction disintegrate rapidly.'
+                        },
+                        {
+                            title: 'Zendesk facility defaults',
+                            description: 'Zendesk\'s direct lending facility - the largest ARR-backed loan ever syndicated - enters restructuring. AI customer service automation eliminates the revenue base underlying the debt.'
+                        },
+                        {
+                            title: 'Displaced workers compress wages economy-wide',
+                            description: 'White-collar workers displaced from high-paying roles flood service sectors, accepting lower wages. Wage compression spreads from tech to broader economy as job seekers compete for remaining positions.'
+                        },
+                        {
+                            title: 'Initial jobless claims hit 487,000',
+                            description: 'Weekly initial jobless claims surge to 487,000, highest level since 2020 pandemic. Labor market stress becomes undeniable as displacement accelerates beyond retraining capacity.'
+                        },
+                        {
+                            title: 'Recession: two quarters negative GDP',
+                            description: 'Economy officially enters recession with two consecutive quarters of negative real GDP growth. Declining consumer spending from job losses creates demand collapse feedback loop.'
+                        }
+                    ],
+                    expanded: false
+                },
+                {
+                    id: 'timeline-3',
+                    type: 'timeline',
+                    label: '2028\nCollapse',
+                    description: 'Unemployment reaches 10.2%. The S&P has fallen 38% from October 2026 highs. Mortgage delinquencies spike in high-income tech hubs. The system confronts the structural income impairment underlying $13 trillion in residential mortgages.',
+                    relativeX: 0,
+                    relativeY: -680,
+                    size: 65,
+                    color: '#b8860b',
+                    leaves: [
+                        {
+                            title: 'Unemployment reaches 10.2%',
+                            description: 'Unemployment rate hits 10.2%, highest since Great Recession. White-collar sectors that historically provided employment stability experience unprecedented structural job loss.'
+                        },
+                        {
+                            title: 'S&P falls 38% from 2026 highs',
+                            description: 'S&P 500 crashes 38% from October 2026 peak as markets price in systemic economic restructuring. Technology and financial services sectors lead decline as AI impact becomes undeniable.'
+                        },
+                        {
+                            title: 'Mortgage delinquencies spike in tech hubs',
+                            description: 'Early-stage mortgage delinquencies appear in San Francisco, Seattle, Austin - high-income ZIP codes populated by previously bulletproof 780+ FICO score borrowers facing structural income loss.'
+                        },
+                        {
+                            title: '$13T mortgage market faces structural impairment',
+                            description: 'System confronts structural income impairment underlying $13 trillion in residential mortgages. Unlike 2008 subprime crisis, these loans were properly underwritten - the economy itself broke.'
+                        }
+                    ],
+                    expanded: false
+                }
+            ],
+            causes: [
+                {
+                    id: 'cause-1',
+                    type: 'cause',
+                    label: 'Labor\nDisplacement',
+                    description: 'As AI capabilities advance, firms reduce headcount and redeploy savings into additional AI capability. Displaced workers accept lower-paying roles, reducing consumer spending. Declining demand forces companies to invest more aggressively in AI, accelerating capability improvements and creating a self-reinforcing negative loop with no natural brake.',
+                    relativeX: -380,
+                    relativeY: -150,
+                    size: 60,
+                    color: '#8b4513',
+                    leaves: [
+                        {
+                            title: 'Firms cut headcount, redeploy to AI',
+                            description: 'Companies reduce workforce and invest payroll savings into AI capabilities. Each productivity gain enables further headcount reduction, creating exponential automation acceleration.'
+                        },
+                        {
+                            title: 'Displaced workers accept lower wages',
+                            description: 'Workers displaced from high-paying knowledge roles accept positions at 40-60% pay cuts. Desperate job seekers willing to take anything available, destroying wage floors across sectors.'
+                        },
+                        {
+                            title: 'Consumer spending declines',
+                            description: 'Mass income reduction drives consumption collapse. Households cut discretionary spending, default on credit, delay major purchases. Demand destruction spreads across all consumer sectors.'
+                        },
+                        {
+                            title: 'Declining demand drives more AI investment',
+                            description: 'Revenue pressure from falling demand forces companies to cut costs more aggressively through AI. Economic weakness accelerates rather than slows automation adoption.'
+                        },
+                        {
+                            title: 'Self-reinforcing loop with no brake',
+                            description: 'Each step amplifies the next with no natural equilibrium. Unlike past automation waves, AI improves faster than workers can retrain or economy can adjust. No mechanism to stop acceleration.'
+                        }
+                    ],
+                    expanded: false
+                },
+                {
+                    id: 'cause-2',
+                    type: 'cause',
+                    label: 'Business\nModel Collapse',
+                    description: 'Consumer agents eliminate friction that companies monetized for decades. Travel platforms, insurance renewals, real estate, and financial services face demand destruction as machines optimize purely for price and fit rather than accepting habitual defaults.',
+                    relativeX: 380,
+                    relativeY: -150,
+                    size: 60,
+                    color: '#8b4513',
+                    leaves: [
+                        {
+                            title: 'Consumer agents eliminate monetized friction',
+                            description: 'AI agents remove all friction companies monetized for decades - password resets, subscription renewals, comparison shopping, form filling. Convenience layer that generated billions evaporates.'
+                        },
+                        {
+                            title: 'Travel platforms face demand destruction',
+                            description: 'Expedia, Booking.com face existential crisis as agents book directly with hotels and airlines. No human tolerates comparison shopping; agents do it instantly and perfectly.'
+                        },
+                        {
+                            title: 'Insurance renewals automated away',
+                            description: 'Auto insurance, home insurance renewal cycle collapses. Agents shop every policy at renewal, eliminating price increases from consumer inattention. Entire business model built on retention inertia fails.'
+                        },
+                        {
+                            title: 'Real estate intermediation collapses',
+                            description: 'Real estate agents, mortgage brokers face demand destruction as AI handles search, negotiation, paperwork. Buyers and sellers question paying 5-6% commission when AI does equivalent work.'
+                        },
+                        {
+                            title: 'Machines optimize for price, not habit',
+                            description: 'Human purchasing driven by habit, brand loyalty, convenience. Machine agents optimize purely for price and specification match, destroying premium pricing power and brand moats.'
+                        }
+                    ],
+                    expanded: false
+                },
+                {
+                    id: 'cause-3',
+                    type: 'cause',
+                    label: 'Financial\nContagion',
+                    description: 'PE-backed software valuations assumed persistent annual recurring revenue. As this assumption breaks, private credit deteriorates. Life insurers that funded private credit through annuity products face regulatory pressure to increase capital reserves, forcing either asset sales or capital raises at unfavorable terms.',
+                    relativeX: -480,
+                    relativeY: 50,
+                    size: 60,
+                    color: '#8b4513',
+                    leaves: [
+                        {
+                            title: 'PE software valuations assume persistent ARR',
+                            description: 'Private equity software deals priced on assumption of stable recurring revenue. Valuations built on 5-7x ARR multiples require subscription revenue to persist through economic cycles.'
+                        },
+                        {
+                            title: 'ARR assumption breaks, credit deteriorates',
+                            description: 'AI disruption proves recurring revenue is not actually recurring. Customer service software, analytics platforms, workflow tools face 40-60% revenue collapse as AI replacements emerge.'
+                        },
+                        {
+                            title: 'Life insurers funded via annuity products',
+                            description: 'Life insurance companies funded private credit boom through annuity products promising stable returns. "Permanent capital" architecture requires consistent cash flows to meet policyholder obligations.'
+                        },
+                        {
+                            title: 'Regulatory pressure to raise capital reserves',
+                            description: 'State insurance regulators force capital reserve increases as private credit holdings deteriorate. Insurers must either inject capital or reduce risky asset exposure to maintain solvency ratios.'
+                        },
+                        {
+                            title: 'Forced asset sales at unfavorable terms',
+                            description: 'Capital-constrained insurers forced to sell private credit positions into illiquid, falling market. Fire sales accelerate price decline, spreading contagion across entire private credit market.'
+                        }
+                    ],
+                    expanded: false
+                },
+                {
+                    id: 'cause-4',
+                    type: 'cause',
+                    label: 'Income\nShock',
+                    description: 'White-collar workers who are "780 FICO score" borrowers face structural income impairment from displacement or forced downshifts. These loans were underwritten assuming stable 30-year employment; the underlying assumption no longer holds.',
+                    relativeX: 480,
+                    relativeY: 50,
+                    size: 60,
+                    color: '#8b4513',
+                    leaves: [
+                        {
+                            title: '780 FICO borrowers face income impairment',
+                            description: 'Previously bulletproof 780+ credit score borrowers - software engineers, analysts, managers - experience structural income loss. These were model borrowers with perfect payment history.'
+                        },
+                        {
+                            title: 'Displacement or forced downshifts',
+                            description: 'White-collar workers lose $150K jobs, find $60K roles or unemployment. Income impairment is structural, not temporary - skills genuinely less valuable in AI economy.'
+                        },
+                        {
+                            title: 'Loans assumed 30-year stable employment',
+                            description: 'Mortgages underwritten assuming borrowers maintain employment and income through 30-year term. Historical default models based on temporary setbacks like job loss or illness, not permanent skill obsolescence.'
+                        },
+                        {
+                            title: 'Core assumption no longer holds',
+                            description: 'Underwriting assumed employment stability in knowledge economy. AI proves white-collar jobs are not stable - they are vulnerable to automation at scale. "The loans were good on day one. The world changed after."'
+                        }
+                    ],
+                    expanded: false
+                }
+            ],
+            consequences: [
+                {
+                    id: 'consequence-1',
+                    type: 'consequence',
+                    label: 'Software\nDefaults',
+                    description: 'Zendesk\'s direct lending facility, the largest ARR-backed loan ever syndicated, enters restructuring as AI customer service automation eliminates its revenue base. Moody\'s downgrades $18 billion in PE-backed software debt across 14 issuers.',
+                    relativeX: -350,
+                    relativeY: 250,
+                    size: 55,
+                    color: '#cd5c5c',
+                    leaves: [
+                        {
+                            title: 'Zendesk facility enters restructuring',
+                            description: 'Zendesk\'s $500M+ direct lending facility enters formal restructuring negotiations. Lenders face 60-70% recovery rates at best as underlying ARR proves non-recurring.'
+                        },
+                        {
+                            title: 'Largest ARR-backed loan collapses',
+                            description: 'First major test case for software debt market. Zendesk was considered high-quality credit - if this fails, entire asset class is mispriced. Market realizes SaaS recurring revenue is vulnerable to AI disruption.'
+                        },
+                        {
+                            title: 'AI eliminates customer service revenue',
+                            description: 'AI customer service agents handle 80%+ of support tickets at 1/10th the cost. Companies cancel Zendesk subscriptions en masse. Revenue base supporting debt evaporates in 18 months.'
+                        },
+                        {
+                            title: 'Moody\'s downgrades $18B across 14 issuers',
+                            description: 'Moody\'s downgrades $18 billion in PE-backed software debt across 14 companies. Rating agency acknowledges AI disruption creates systematic credit risk across entire software sector.'
+                        }
+                    ],
+                    expanded: false
+                },
+                {
+                    id: 'consequence-2',
+                    type: 'consequence',
+                    label: 'Capital\nCrisis',
+                    description: 'The "permanent capital" architecture supporting private credit—annuity deposits invested in leveraged technology deals—proves fragile. Regulatory scrutiny of insurers\' private credit holdings forces recognition that the system is built on correlated bets on white-collar productivity that no longer hold.',
+                    relativeX: 350,
+                    relativeY: 250,
+                    size: 55,
+                    color: '#cd5c5c',
+                    leaves: [
+                        {
+                            title: 'Permanent capital architecture proves fragile',
+                            description: 'Life insurers\' "permanent capital" structure - annuity deposits funding illiquid private credit - designed for stability, not crisis. No quick exit when asset quality deteriorates rapidly.'
+                        },
+                        {
+                            title: 'Annuity deposits in leveraged tech deals',
+                            description: 'Insurers invested annuity premiums into private credit backed by software companies. Policyholder money funding leveraged buyouts of AI-vulnerable businesses creates systemic exposure.'
+                        },
+                        {
+                            title: 'Regulatory scrutiny intensifies',
+                            description: 'State insurance commissioners demand capital raises and risk reduction. Public concern mounts as policyholders realize their annuities fund tech company leverage in middle of AI disruption.'
+                        },
+                        {
+                            title: 'Correlated bets on productivity collapse',
+                            description: 'System built on correlated assumption: white-collar productivity remains valuable. All loans, all investments, all business models priced on this. AI breaks the correlation assumption simultaneously across everything.'
+                        }
+                    ],
+                    expanded: false
+                },
+                {
+                    id: 'consequence-3',
+                    type: 'consequence',
+                    label: 'Housing\nMarket Break',
+                    description: 'Early-stage delinquencies appear in jumbo-heavy ZIP codes populated by previously bulletproof 780+ FICO borrowers. Home prices fall 11% year-over-year in San Francisco, 9% in Seattle, 8% in Austin. The trajectory threatens contagion into the broader mortgage market.',
+                    relativeX: -250,
+                    relativeY: 450,
+                    size: 55,
+                    color: '#cd5c5c',
+                    leaves: [
+                        {
+                            title: '780+ FICO borrowers begin defaulting',
+                            description: 'Early-stage delinquencies appear in jumbo-heavy ZIP codes with high concentration of tech workers. These are not subprime borrowers - they are the safest credit profiles experiencing structural income loss.'
+                        },
+                        {
+                            title: 'SF home prices fall 11% YoY',
+                            description: 'San Francisco Bay Area home prices decline 11% year-over-year, fastest decline since 2008. Tech worker displacement destroys housing demand in previously red-hot market.'
+                        },
+                        {
+                            title: 'Seattle down 9%, Austin down 8%',
+                            description: 'Seattle falls 9%, Austin drops 8% as tech-heavy cities face synchronized housing stress. Markets dependent on white-collar employment experience price discovery as buyer pool evaporates.'
+                        },
+                        {
+                            title: 'Contagion threatens broader mortgage market',
+                            description: 'If prime borrowers in high-income ZIP codes default due to structural income loss, entire mortgage market mispriced. Risk spreads from tech hubs to all knowledge-worker-dependent regions.'
+                        }
+                    ],
+                    expanded: false
+                },
+                {
+                    id: 'consequence-4',
+                    type: 'consequence',
+                    label: 'Demand\nCollapse',
+                    description: 'Labor\'s share of GDP drops from 56% in 2024 to 46% in 2028—the sharpest four-year decline on record. Output flows to capital rather than households, breaking the circular income flow that funds federal receipts and consumer spending.',
+                    relativeX: 250,
+                    relativeY: 450,
+                    size: 55,
+                    color: '#cd5c5c',
+                    leaves: [
+                        {
+                            title: 'Labor share of GDP: 56% → 46%',
+                            description: 'Labor\'s share of GDP drops from 56% in 2024 to 46% in 2028 - sharpest four-year decline in recorded economic history. Productivity gains flow to capital owners, not workers.'
+                        },
+                        {
+                            title: 'Sharpest four-year decline on record',
+                            description: 'Previous largest four-year decline was 4 percentage points during 1980s automation. 10-point collapse in four years unprecedented - AI restructures income distribution at revolutionary speed.'
+                        },
+                        {
+                            title: 'Output flows to capital, not households',
+                            description: 'Economy continues producing goods and services but income flows to AI owners and shareholders. Workers who previously captured productivity gains through wages now capture nothing.'
+                        },
+                        {
+                            title: 'Circular income flow breaks',
+                            description: 'Circular flow - wages fund consumption which funds business revenue which funds wages - breaks permanently. Output and income decouple. AI creates production without corresponding income distribution to consumers.'
+                        }
+                    ],
+                    expanded: false
+                }
+            ],
+            solutions: [
+                {
+                    id: 'solution-1',
+                    type: 'solution',
+                    label: 'Wealth\nTransfers',
+                    description: 'The "Transition Economy Act" proposes direct transfers to displaced workers funded through deficit spending and a tax on AI inference compute. Debates over funding mechanisms divide along partisan lines, delaying implementation.',
+                    relativeX: 600,
+                    relativeY: -250,
+                    size: 50,
+                    color: '#228b22',
+                    leaves: [
+                        {
+                            title: 'Transition Economy Act proposed',
+                            description: 'Legislative proposal for direct cash transfers to displaced workers during AI transition. Aims to maintain consumer purchasing power while economy restructures over 5-10 year period.'
+                        },
+                        {
+                            title: 'Direct transfers to displaced workers',
+                            description: 'Monthly payments to workers displaced by AI, scaled by previous income. Designed to prevent consumption collapse while workers retrain or find new employment in restructured economy.'
+                        },
+                        {
+                            title: 'Funded via deficit spending + AI compute tax',
+                            description: 'Dual funding mechanism: deficit spending for immediate relief, AI compute taxation for long-term sustainability. Tax on inference compute usage to capture productivity gains flowing to AI owners.'
+                        },
+                        {
+                            title: 'Partisan debates delay implementation',
+                            description: 'Funding mechanism divides along partisan lines. Progressive wing wants wealth taxes, moderate Democrats prefer compute taxes, Republicans resist government transfers. Gridlock prevents action during critical window.'
+                        }
+                    ],
+                    expanded: false
+                },
+                {
+                    id: 'solution-2',
+                    type: 'solution',
+                    label: 'AI Tax',
+                    description: 'Proposals for computing taxation face intense lobbying resistance from private sector incumbents. Alternative frameworks propose public claims on AI infrastructure returns, structured as sovereign wealth fund-style dividends.',
+                    relativeX: 650,
+                    relativeY: -80,
+                    size: 50,
+                    color: '#228b22',
+                    leaves: [
+                        {
+                            title: 'Computing taxation proposals',
+                            description: 'Tax on computational workload (per inference call, per training run) or AI transaction fees. Aims to capture productivity gains at source rather than through traditional income/corporate taxes.'
+                        },
+                        {
+                            title: 'Intense lobbying resistance',
+                            description: 'Tech companies and AI startups mount aggressive lobbying campaign. Argue compute taxes will drive innovation offshore, create black markets, disadvantage US competitiveness in critical technology.'
+                        },
+                        {
+                            title: 'Alternative: public claims on AI returns',
+                            description: 'Government takes equity stakes in AI infrastructure or mandates profit-sharing. Public captures share of AI productivity gains directly rather than through taxation after the fact.'
+                        },
+                        {
+                            title: 'Sovereign wealth fund-style dividends',
+                            description: 'Structure public AI ownership like Alaska Permanent Fund or Norwegian oil fund. Distribute AI productivity gains as universal dividends to all citizens, funded by public equity claims.'
+                        }
+                    ],
+                    expanded: false
+                },
+                {
+                    id: 'solution-3',
+                    type: 'solution',
+                    label: 'Regulation',
+                    description: 'Proposals range from non-proliferation frameworks (treating AI like nuclear weapons) to capture-resistant regulatory design. Political gridlock prevents coherent policy response as "the canary is still alive"—written from February 2026 perspective, before crisis fully manifests.',
+                    relativeX: 650,
+                    relativeY: 110,
+                    size: 50,
+                    color: '#228b22',
+                    leaves: [
+                        {
+                            title: 'Non-proliferation frameworks proposed',
+                            description: 'Proposals to treat AI development like nuclear weapons programs - restricted to licensed entities with international oversight. Aims to slow deployment speed to match societal adjustment capacity.'
+                        },
+                        {
+                            title: 'Treat AI like nuclear weapons',
+                            description: 'Restrict frontier AI development to small number of entities under international monitoring. Prevent race-to-bottom dynamics where competitive pressure forces premature deployment.'
+                        },
+                        {
+                            title: 'Capture-resistant regulatory design',
+                            description: 'Proposals for regulatory structures immune to industry capture. Independent oversight boards, mandatory safety testing, liability frameworks that internalize displacement costs.'
+                        },
+                        {
+                            title: 'Political gridlock prevents response',
+                            description: 'Regulatory proposals stall in political deadlock. Free-market advocates oppose intervention, progressives demand worker protections, tech industry lobbies against restrictions. "The canary is still alive" mentality delays action.'
+                        }
+                    ],
+                    expanded: false
+                },
+                {
+                    id: 'solution-4',
+                    type: 'solution',
+                    label: 'Job\nGuarantee',
+                    description: 'The memo notably lacks detailed discussion of job guarantee programs or comprehensive retraining frameworks, highlighting policy vacuum in addressing structural rather than cyclical displacement.',
+                    relativeX: 600,
+                    relativeY: 300,
+                    size: 50,
+                    color: '#228b22',
+                    leaves: [
+                        {
+                            title: 'Job guarantee programs lacking',
+                            description: 'Memo notably avoids detailed discussion of federal job guarantee despite historical precedent (WPA, CCC). Policy proposals focus on income replacement rather than employment creation.'
+                        },
+                        {
+                            title: 'Retraining frameworks missing',
+                            description: 'No comprehensive retraining infrastructure proposed. Assumption that displaced workers can retrain for new roles ignores reality: AI learns faster than humans, making retraining futile for many.'
+                        },
+                        {
+                            title: 'Policy vacuum in structural displacement',
+                            description: 'Proposed solutions assume temporary cyclical downturn rather than permanent structural shift. No policy framework for economy where large fraction of population genuinely unemployable at market wages.'
+                        },
+                        {
+                            title: 'Focus remains on cyclical solutions',
+                            description: 'Political system still treating AI displacement as temporary transition requiring short-term relief. Failure to acknowledge this is permanent restructuring requiring new social contract between capital and labor.'
+                        }
+                    ],
+                    expanded: false
+                }
+            ]
+        };
+
+        // Build full node list with absolute positions
+        const nodes = [mapData.center];
+        ['timeline', 'causes', 'consequences', 'solutions'].forEach(category => {
+            mapData[category].forEach(node => {
+                nodes.push({
+                    ...node,
+                    x: mapData.center.x + node.relativeX,
+                    y: mapData.center.y + node.relativeY,
+                    discovered: false,
+                    revealProgress: 0,
+                    leafNodes: []
+                });
+            });
+        });
+
+        // Center is always discovered
+        mapData.center.discovered = true;
+        mapData.center.revealProgress = 1;
+        mapData.center.leafNodes = [];
+
+        // Build connections
+        const connections = [];
+        // Timeline connections (chain)
+        for (let i = 0; i < mapData.timeline.length; i++) {
+            const fromId = i === 0 ? 'center' : mapData.timeline[i - 1].id;
+            connections.push({ from: fromId, to: mapData.timeline[i].id });
+        }
+        // Other connections to center
+        ['causes', 'consequences', 'solutions'].forEach(category => {
+            mapData[category].forEach(node => {
+                connections.push({ from: node.id, to: 'center' });
+            });
+        });
+
+        // Mouse tracking
+        let mouseScreenX = canvas.width / 2;
+        let mouseScreenY = canvas.height / 2;
+        let mouseX = canvas.width / 2;
+        let mouseY = canvas.height / 2;
+        let hoveredNode = null;
+
+        canvas.addEventListener('mousemove', (e) => {
+            mouseScreenX = e.clientX;
+            mouseScreenY = e.clientY;
+            mouseX = e.clientX - cameraX;
+            mouseY = e.clientY - cameraY;
+
+            // Update flashlight cursor (screen position)
+            const flashlight = document.getElementById('flashlight');
+            flashlight.style.left = `${mouseScreenX - 12}px`;
+            flashlight.style.top = `${mouseScreenY - 12}px`;
+
+            // Pan camera when mouse near edges (with distance-based speed)
+            if (mouseScreenX < panEdgeThreshold) {
+                const strength = 1 - (mouseScreenX / panEdgeThreshold);
+                cameraX += panSpeed * strength;
+            } else if (mouseScreenX > canvas.width - panEdgeThreshold) {
+                const strength = 1 - ((canvas.width - mouseScreenX) / panEdgeThreshold);
+                cameraX -= panSpeed * strength;
+            }
+            if (mouseScreenY < panEdgeThreshold) {
+                const strength = 1 - (mouseScreenY / panEdgeThreshold);
+                cameraY += panSpeed * strength;
+            } else if (mouseScreenY > canvas.height - panEdgeThreshold) {
+                const strength = 1 - ((canvas.height - mouseScreenY) / panEdgeThreshold);
+                cameraY -= panSpeed * strength;
+            }
+
+            // Update world mouse position after camera pan
+            mouseX = mouseScreenX - cameraX;
+            mouseY = mouseScreenY - cameraY;
+
+            // Check hover
+            hoveredNode = null;
+            nodes.forEach(node => {
+                const dx = mouseX - node.x;
+                const dy = mouseY - node.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < node.size) {
+                    hoveredNode = node;
+                }
+            });
+
+            updateTooltip();
+        });
+
+        // Trackpad/wheel scrolling support
+        canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+
+            // Use deltaX and deltaY from wheel event (works with trackpad gestures)
+            cameraX += e.deltaX;
+            cameraY += e.deltaY;
+
+            // Update world mouse position after camera pan
+            mouseX = mouseScreenX - cameraX;
+            mouseY = mouseScreenY - cameraY;
+
+            // Update hover after scrolling
+            hoveredNode = null;
+            nodes.forEach(node => {
+                const dx = mouseX - node.x;
+                const dy = mouseY - node.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < node.size) {
+                    hoveredNode = node;
+                }
+            });
+
+            updateTooltip();
+        }, { passive: false });
+
+        // Keyboard arrow keys for panning
+        window.addEventListener('keydown', (e) => {
+            const keyPanSpeed = 30;
+
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                cameraY += keyPanSpeed;
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                cameraY -= keyPanSpeed;
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                cameraX += keyPanSpeed;
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                cameraX -= keyPanSpeed;
+            }
+
+            // Update world mouse position after keyboard pan
+            mouseX = mouseScreenX - cameraX;
+            mouseY = mouseScreenY - cameraY;
+        });
+
+        // Click to expand leaves
+        canvas.addEventListener('click', (e) => {
+            console.log('Click detected', hoveredNode);
+
+            if (!hoveredNode) {
+                console.log('No hovered node');
+                return;
+            }
+
+            if (!hoveredNode.discovered) {
+                console.log('Node not discovered yet');
+                return;
+            }
+
+            if (!hoveredNode.leaves || hoveredNode.leaves.length === 0) {
+                console.log('No leaves on this node');
+                return;
+            }
+
+            if (hoveredNode.expanded) {
+                console.log('Already expanded');
+                return; // Once expanded, stays expanded
+            }
+
+            console.log('Expanding node with', hoveredNode.leaves.length, 'leaves');
+
+            // Mark as expanded and ensure it stays bright
+            hoveredNode.expanded = true;
+            hoveredNode.revealProgress = 1;
+            hoveredNode.discovered = true;
+
+            // Create leaf nodes with better spacing
+            const leafCount = hoveredNode.leaves.length;
+            const leafRadius = 180; // Increased from 120
+            const angleStep = (Math.PI * 2) / leafCount;
+            const startAngle = -Math.PI / 2; // Start from top
+
+            // Helper function to check if position overlaps with existing nodes
+            function checkOverlap(x, y, size) {
+                return nodes.some(node => {
+                    const dx = x - node.x;
+                    const dy = y - node.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    return distance < (size + node.size + 20); // 20px buffer
+                });
+            }
+
+            hoveredNode.leafNodes = hoveredNode.leaves.map((leaf, i) => {
+                let angle = startAngle + i * angleStep;
+                let radius = leafRadius;
+                let leafX = hoveredNode.x + Math.cos(angle) * radius;
+                let leafY = hoveredNode.y + Math.sin(angle) * radius;
+
+                // Try to find non-overlapping position
+                let attempts = 0;
+                while (checkOverlap(leafX, leafY, 40) && attempts < 8) {
+                    // Try slightly different angles and distances
+                    angle += Math.PI / 12;
+                    radius += 30;
+                    leafX = hoveredNode.x + Math.cos(angle) * radius;
+                    leafY = hoveredNode.y + Math.sin(angle) * radius;
+                    attempts++;
+                }
+
+                console.log(`Creating leaf ${i} at (${leafX}, ${leafY}) after ${attempts} adjustments`);
+
+                return {
+                    id: `${hoveredNode.id}-leaf-${i}`,
+                    type: 'leaf',
+                    label: leaf.title,
+                    description: leaf.description,
+                    x: leafX,
+                    y: leafY,
+                    size: 40,
+                    color: hoveredNode.color,
+                    discovered: true,
+                    revealProgress: 0,
+                    appearProgress: 0,
+                    parent: hoveredNode.id
+                };
+            });
+
+            console.log('Created', hoveredNode.leafNodes.length, 'leaf nodes');
+
+            // Add to global nodes array
+            nodes.push(...hoveredNode.leafNodes);
+
+            console.log('Total nodes now:', nodes.length);
+        });
+
+        // Tooltip
+        function updateTooltip() {
+            const tooltip = document.getElementById('tooltip');
+            if (hoveredNode && hoveredNode.revealProgress > 0.5) {
+                tooltip.classList.add('visible');
+                document.getElementById('tooltipTitle').textContent = hoveredNode.label.replace('\n', ' ');
+
+                let description = hoveredNode.description;
+                if (hoveredNode.leaves && hoveredNode.leaves.length > 0 && !hoveredNode.expanded) {
+                    description += ' (Click to expand details)';
+                }
+                document.getElementById('tooltipDescription').textContent = description;
+
+                // Use screen coordinates for tooltip
+                tooltip.style.left = `${mouseScreenX + 30}px`;
+                tooltip.style.top = `${mouseScreenY + 20}px`;
+            } else {
+                tooltip.classList.remove('visible');
+            }
+        }
+
+        // Progress tracking
+        function updateProgress() {
+            const total = nodes.length - 1; // Exclude center
+            const discovered = nodes.filter(n => n.discovered && n.id !== 'center').length;
+            const percentage = Math.round((discovered / total) * 100);
+
+            document.getElementById('progressText').textContent = `${percentage}% Discovered`;
+            document.getElementById('progressFill').style.width = `${percentage}%`;
+
+            if (percentage > 20) {
+                document.getElementById('instructions').classList.add('hidden');
+            }
+
+            // Enlightenment mode at 100%
+            if (percentage === 100) {
+                document.body.classList.add('enlightened');
+            }
+        }
+
+        // Drawing functions
+        function drawHandDrawnCircle(x, y, radius, color, filled = false) {
+            const points = 32;
+            const angleStep = (Math.PI * 2) / points;
+
+            ctx.beginPath();
+            for (let i = 0; i <= points; i++) {
+                const angle = i * angleStep;
+                const variation = radius * (0.05 * Math.sin(i * 0.7) + 0.05 * Math.cos(i * 1.3));
+                const r = radius + variation;
+                const px = x + Math.cos(angle) * r;
+                const py = y + Math.sin(angle) * r;
+
+                if (i === 0) {
+                    ctx.moveTo(px, py);
+                } else {
+                    ctx.lineTo(px, py);
+                }
+            }
+            ctx.closePath();
+
+            if (filled) {
+                ctx.fillStyle = color;
+                ctx.fill();
+            }
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        }
+
+        function drawWavyLine(x1, y1, x2, y2, color, opacity) {
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            const segments = Math.floor(distance / 20);
+
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+
+            for (let i = 1; i <= segments; i++) {
+                const t = i / segments;
+                const x = x1 + dx * t;
+                const y = y1 + dy * t;
+                const perpX = -dy / distance;
+                const perpY = dx / distance;
+                const wave = Math.sin(t * Math.PI * 3) * 5;
+                const wx = x + perpX * wave;
+                const wy = y + perpY * wave;
+                ctx.lineTo(wx, wy);
+            }
+
+            ctx.strokeStyle = `rgba(${hexToRgb(color)}, ${opacity})`;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result
+                ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+                : '100, 80, 60';
+        }
+
+        // Main render loop
+        function render() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Soft paper background
+            ctx.fillStyle = '#f5f1e8';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Apply camera transform
+            ctx.save();
+            ctx.translate(cameraX, cameraY);
+
+            // Update node discovery based on flashlight proximity
+            const flashlightRadius = 180;
+            const isEnlightened = document.body.classList.contains('enlightened');
+
+            nodes.forEach(node => {
+                if (node.id === 'center') return;
+
+                // Animate leaf appearance
+                if (node.type === 'leaf') {
+                    if (node.appearProgress < 1) {
+                        node.appearProgress = Math.min(1, node.appearProgress + 0.08);
+                        node.revealProgress = node.appearProgress;
+                    } else {
+                        // Keep leaves fully visible once appeared
+                        node.revealProgress = 1;
+                    }
+                    return;
+                }
+
+                const dx = mouseX - node.x;
+                const dy = mouseY - node.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < flashlightRadius) {
+                    const proximity = 1 - (distance / flashlightRadius);
+                    node.revealProgress = Math.min(1, node.revealProgress + proximity * 0.08);
+
+                    if (node.revealProgress > 0.7 && !node.discovered) {
+                        node.discovered = true;
+                        updateProgress();
+                    }
+                } else if (!node.discovered && !node.expanded) {
+                    // Only fade if not discovered AND not expanded
+                    node.revealProgress = Math.max(0, node.revealProgress - 0.02);
+                } else {
+                    // Keep discovered nodes and expanded nodes bright
+                    node.revealProgress = 1;
+                }
+            });
+
+            // Draw connections
+            connections.forEach(conn => {
+                const fromNode = nodes.find(n => n.id === conn.from);
+                const toNode = nodes.find(n => n.id === conn.to);
+                if (!fromNode || !toNode) return;
+
+                // Stronger opacity for connections to/from expanded nodes
+                let baseOpacity = Math.min(fromNode.revealProgress, toNode.revealProgress) * 0.4;
+                if (fromNode.expanded || toNode.expanded) {
+                    baseOpacity = Math.max(baseOpacity, 0.6);
+                }
+
+                if (baseOpacity > 0.05) {
+                    drawWavyLine(fromNode.x, fromNode.y, toNode.x, toNode.y, fromNode.color, baseOpacity);
+                }
+            });
+
+            // Draw connections from parents to leaves (always bright for expanded nodes)
+            nodes.forEach(node => {
+                if (node.leafNodes && node.leafNodes.length > 0) {
+                    node.leafNodes.forEach(leaf => {
+                        // Keep leaf connections bright
+                        const opacity = Math.min(node.revealProgress, leaf.revealProgress) * 0.5;
+                        if (opacity > 0.05) {
+                            drawWavyLine(node.x, node.y, leaf.x, leaf.y, node.color, opacity);
+                        }
+                    });
+                }
+            });
+
+            // Draw nodes
+            nodes.forEach(node => {
+                const baseOpacity = node.id === 'center' ? 1 : node.revealProgress;
+                const dimOpacity = Math.max(0.1, baseOpacity);
+
+                if (dimOpacity > 0.05) {
+                    // Leaf nodes have special rendering
+                    if (node.type === 'leaf') {
+                        const glowIntensity = Math.sin(node.appearProgress * Math.PI);
+
+                        // Strong glow effect for appearing leaves
+                        if (node.appearProgress < 1) {
+                            ctx.shadowColor = node.color;
+                            ctx.shadowBlur = 30 * glowIntensity;
+                        } else {
+                            ctx.shadowColor = node.color;
+                            ctx.shadowBlur = 10;
+                        }
+
+                        // Leaf background - brighter and more opaque
+                        const fillColor = node.color;
+                        const rgbColor = hexToRgb(fillColor);
+                        ctx.globalAlpha = dimOpacity * 0.5;
+                        drawHandDrawnCircle(node.x, node.y, node.size * 0.85, `rgba(${rgbColor}, 1)`, true);
+
+                        // Leaf outline - stronger
+                        ctx.globalAlpha = dimOpacity;
+                        ctx.lineWidth = 3;
+                        drawHandDrawnCircle(node.x, node.y, node.size, fillColor, false);
+
+                        ctx.shadowBlur = 0;
+
+                        // Leaf text - always visible once appeared
+                        if (baseOpacity > 0.2) {
+                            ctx.globalAlpha = Math.max(0.8, baseOpacity);
+                            ctx.fillStyle = '#2a2520';
+                            ctx.font = 'bold 15px Caveat';
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+
+                            // Word wrap for leaves
+                            const maxWidth = node.size * 1.8;
+                            const words = node.label.split(' ');
+                            let line = '';
+                            let lines = [];
+
+                            words.forEach(word => {
+                                const testLine = line + (line ? ' ' : '') + word;
+                                const metrics = ctx.measureText(testLine);
+                                if (metrics.width > maxWidth && line) {
+                                    lines.push(line);
+                                    line = word;
+                                } else {
+                                    line = testLine;
+                                }
+                            });
+                            lines.push(line);
+
+                            lines.forEach((line, i) => {
+                                const offsetY = (i - (lines.length - 1) / 2) * 17;
+                                ctx.fillText(line, node.x, node.y + offsetY);
+                            });
+                        }
+                    } else {
+                        // Regular node rendering
+                        const fillColor = node.color;
+                        const rgbColor = hexToRgb(fillColor);
+
+                        // Add glow for expanded nodes
+                        if (node.expanded) {
+                            ctx.shadowColor = fillColor;
+                            ctx.shadowBlur = 15;
+                        }
+
+                        ctx.globalAlpha = dimOpacity * 0.2;
+                        drawHandDrawnCircle(node.x, node.y, node.size * 0.9, `rgba(${rgbColor}, 1)`, true);
+
+                        // Node outline (stronger for expanded)
+                        ctx.globalAlpha = node.expanded ? 1 : dimOpacity;
+                        drawHandDrawnCircle(node.x, node.y, node.size, fillColor, false);
+
+                        ctx.shadowBlur = 0;
+
+                        // Inner circle accent
+                        ctx.globalAlpha = dimOpacity * 0.6;
+                        drawHandDrawnCircle(node.x, node.y, node.size * 0.25, fillColor, true);
+
+                        // Label
+                        if (baseOpacity > 0.3) {
+                            ctx.globalAlpha = baseOpacity;
+                            ctx.fillStyle = '#4a3f35';
+                            ctx.font = 'bold 22px Caveat';
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+
+                            const lines = node.label.split('\n');
+                            lines.forEach((line, i) => {
+                                const offsetY = (i - (lines.length - 1) / 2) * 24;
+                                ctx.fillText(line, node.x, node.y + offsetY);
+                            });
+                        }
+
+                        // Expansion indicator (+ icon for unexpanded)
+                        if (node.discovered && node.leaves && node.leaves.length > 0 && !node.expanded && baseOpacity > 0.5) {
+                            // Draw a circle with + inside
+                            ctx.globalAlpha = baseOpacity * 0.7;
+                            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                            ctx.beginPath();
+                            ctx.arc(node.x + node.size * 0.6, node.y - node.size * 0.6, 12, 0, Math.PI * 2);
+                            ctx.fill();
+
+                            ctx.globalAlpha = baseOpacity;
+                            ctx.fillStyle = node.color;
+                            ctx.font = 'bold 24px Arial';
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            ctx.fillText('+', node.x + node.size * 0.6, node.y - node.size * 0.6);
+                        }
+                    }
+
+                    ctx.globalAlpha = 1;
+                }
+            });
+
+            // Flashlight effect (radial gradient overlay) - only when not enlightened
+            if (!isEnlightened) {
+                const gradient = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, flashlightRadius);
+                gradient.addColorStop(0, 'rgba(245, 241, 232, 0)');
+                gradient.addColorStop(0.6, 'rgba(245, 241, 232, 0)');
+                gradient.addColorStop(1, 'rgba(50, 40, 30, 0.7)');
+
+                ctx.fillStyle = gradient;
+                ctx.fillRect(-cameraX, -cameraY, canvas.width, canvas.height);
+            }
+
+            // Restore transform
+            ctx.restore();
+
+            requestAnimationFrame(render);
+        }
+
+        // Export functionality
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            const dataURL = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.download = '2028-crisis-map.png';
+            link.href = dataURL;
+            link.click();
+        });
+
+        // Start rendering
+        render();
+    </script>
+</body>
+</html>
