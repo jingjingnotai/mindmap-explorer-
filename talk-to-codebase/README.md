@@ -20,12 +20,11 @@ Perfect for:
 ## Quick Start
 
 ```bash
-# 1. Install the skill
-mkdir -p ~/.claude/skills/talk-to-codebase
-curl -o ~/.claude/skills/talk-to-codebase/SKILL.md https://raw.githubusercontent.com/jingjingnotai/mindmap-explorer-/main/talk-to-codebase/SKILL.md
-curl -o ~/.claude/skills/talk-to-codebase/template.html https://raw.githubusercontent.com/jingjingnotai/mindmap-explorer-/main/talk-to-codebase/template.html
+# 1. Install the skill (in Claude Code)
+/plugin marketplace add jingjingnotai/mindmap-explorer-
+/plugin install talk-to-codebase@mindmap-explorer-
 
-# 2. Restart Claude Code, then use it
+# 2. Use it
 cd /path/to/your/repo
 /talk-to-codebase .
 
@@ -56,7 +55,23 @@ Quickly analyzes any codebase and generates a beautiful, interactive HTML guide 
 
 ## Installation
 
-### Option 1: Direct Download (Recommended)
+### Using Claude Code Marketplace (Recommended)
+
+In Claude Code, run these commands:
+
+```bash
+# Add the marketplace repository
+/plugin marketplace add jingjingnotai/mindmap-explorer-
+
+# Install the skill
+/plugin install talk-to-codebase@mindmap-explorer-
+```
+
+The skill will be automatically installed and ready to use immediately.
+
+### Manual Installation (Alternative)
+
+If you prefer to install manually:
 
 ```bash
 # Create skill directory
@@ -70,41 +85,18 @@ curl -o ~/.claude/skills/talk-to-codebase/SKILL.md \
 curl -o ~/.claude/skills/talk-to-codebase/template.html \
   https://raw.githubusercontent.com/jingjingnotai/mindmap-explorer-/main/talk-to-codebase/template.html
 
-# Verify installation
-ls ~/.claude/skills/talk-to-codebase/
-# Should show: SKILL.md  template.html
-```
-
-### Option 2: Git Clone
-
-```bash
-# Clone the repository
-git clone https://github.com/jingjingnotai/mindmap-explorer-.git
-
-# Copy skill files
-mkdir -p ~/.claude/skills/talk-to-codebase
-cp mindmap-explorer-/talk-to-codebase/{SKILL.md,template.html} ~/.claude/skills/talk-to-codebase/
-
-# Verify
-ls ~/.claude/skills/talk-to-codebase/
+# Restart Claude Code
 ```
 
 ### Verify Installation
 
-After installation:
-
-1. **Restart Claude Code** (important!)
-2. **Start a new conversation**
-3. Verify the skill is available:
+After installation, verify the skill is available:
 
 ```bash
-# List installed skills
-ls ~/.claude/skills/
-# You should see: talk-to-codebase/
+# In Claude Code
+/plugin list
 
-# Check skill files
-ls ~/.claude/skills/talk-to-codebase/
-# Should show: SKILL.md  template.html
+# Should show: talk-to-codebase
 ```
 
 ## Usage
@@ -246,31 +238,32 @@ The skill replaces these placeholders during generation:
 
 **Skill not found after installation**
 ```bash
-# Check skill is installed
-ls ~/.claude/skills/talk-to-codebase/
+# Check if skill is installed
+/plugin list
 
-# Should show: SKILL.md  template.html
+# Should show: talk-to-codebase
 
-# If not, try manual installation
+# If not found, try installing again
+/plugin marketplace add jingjingnotai/mindmap-explorer-
+/plugin install talk-to-codebase@mindmap-explorer-
+```
+
+**Marketplace not accessible**
+
+If the marketplace installation doesn't work, use manual installation:
+```bash
 mkdir -p ~/.claude/skills/talk-to-codebase
-cd ~/.claude/skills/talk-to-codebase
-curl -O https://raw.githubusercontent.com/jingjingnotai/mindmap-explorer-/main/talk-to-codebase/SKILL.md
-curl -O https://raw.githubusercontent.com/jingjingnotai/mindmap-explorer-/main/talk-to-codebase/template.html
+curl -o ~/.claude/skills/talk-to-codebase/SKILL.md \
+  https://raw.githubusercontent.com/jingjingnotai/mindmap-explorer-/main/talk-to-codebase/SKILL.md
+curl -o ~/.claude/skills/talk-to-codebase/template.html \
+  https://raw.githubusercontent.com/jingjingnotai/mindmap-explorer-/main/talk-to-codebase/template.html
+# Then restart Claude Code
 ```
 
 **Skill not recognized by Claude Code**
-- Restart Claude Code after installation
 - Start a new conversation
-- Try invoking with full path: `/talk-to-codebase .`
-
-**Permission denied on install.sh**
-```bash
-# Make script executable
-chmod +x install.sh
-
-# Or run with bash
-bash install.sh
-```
+- Try invoking with: `/talk-to-codebase .`
+- Check skill files exist: `ls ~/.claude/skills/talk-to-codebase/`
 
 ### Usage Issues
 
