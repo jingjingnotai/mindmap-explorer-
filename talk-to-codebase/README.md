@@ -21,9 +21,11 @@ Perfect for:
 
 ```bash
 # 1. Install the skill
-curl -L https://raw.githubusercontent.com/jingjingnotai/mindmap-explorer-/main/talk-to-codebase/install.sh | bash
+mkdir -p ~/.claude/skills/talk-to-codebase
+curl -o ~/.claude/skills/talk-to-codebase/SKILL.md https://raw.githubusercontent.com/jingjingnotai/mindmap-explorer-/main/talk-to-codebase/SKILL.md
+curl -o ~/.claude/skills/talk-to-codebase/template.html https://raw.githubusercontent.com/jingjingnotai/mindmap-explorer-/main/talk-to-codebase/template.html
 
-# 2. Use it
+# 2. Restart Claude Code, then use it
 cd /path/to/your/repo
 /talk-to-codebase .
 
@@ -54,29 +56,26 @@ Quickly analyzes any codebase and generates a beautiful, interactive HTML guide 
 
 ## Installation
 
-### Option 1: One-Command Install (Recommended)
+### Option 1: Direct Download (Recommended)
 
 ```bash
-curl -L https://raw.githubusercontent.com/jingjingnotai/mindmap-explorer-/main/talk-to-codebase/install.sh | bash
-```
-
-### Option 2: Manual Install
-
-```bash
-# 1. Create skill directory
+# Create skill directory
 mkdir -p ~/.claude/skills/talk-to-codebase
 
-# 2. Download skill files
-cd ~/.claude/skills/talk-to-codebase
-curl -O https://raw.githubusercontent.com/jingjingnotai/mindmap-explorer-/main/talk-to-codebase/SKILL.md
-curl -O https://raw.githubusercontent.com/jingjingnotai/mindmap-explorer-/main/talk-to-codebase/template.html
+# Download SKILL.md
+curl -o ~/.claude/skills/talk-to-codebase/SKILL.md \
+  https://raw.githubusercontent.com/jingjingnotai/mindmap-explorer-/main/talk-to-codebase/SKILL.md
 
-# 3. Verify installation
+# Download template.html
+curl -o ~/.claude/skills/talk-to-codebase/template.html \
+  https://raw.githubusercontent.com/jingjingnotai/mindmap-explorer-/main/talk-to-codebase/template.html
+
+# Verify installation
 ls ~/.claude/skills/talk-to-codebase/
 # Should show: SKILL.md  template.html
 ```
 
-### Option 3: Git Clone
+### Option 2: Git Clone
 
 ```bash
 # Clone the repository
@@ -92,13 +91,20 @@ ls ~/.claude/skills/talk-to-codebase/
 
 ### Verify Installation
 
-After installation, restart Claude Code or run:
+After installation:
+
+1. **Restart Claude Code** (important!)
+2. **Start a new conversation**
+3. Verify the skill is available:
 
 ```bash
 # List installed skills
 ls ~/.claude/skills/
-
 # You should see: talk-to-codebase/
+
+# Check skill files
+ls ~/.claude/skills/talk-to-codebase/
+# Should show: SKILL.md  template.html
 ```
 
 ## Usage
