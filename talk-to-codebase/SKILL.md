@@ -26,7 +26,11 @@ An HTML file named `{repo-name}-guide.html` with:
 6. **Integration Points** — External services, APIs
 7. **Onboarding Path** — Suggested reading order
 
-**Design**: Professional dark mode UI following UI/UX Pro Max principles — accessible (WCAG AA), responsive, keyboard-navigable, with semantic color tokens and optimized performance.
+**Design**: Two professional styles available:
+- **Editorial** (default): Dark mode with warm terracotta/sage colors, magazine-style layout
+- **Bauhaus**: Industrial geometric design with red/yellow/blue primaries, bold shapes
+
+Both styles follow UI/UX Pro Max principles — accessible (WCAG AA), responsive, keyboard-navigable, with semantic color tokens and optimized performance.
 
 ## Workflow
 
@@ -55,7 +59,33 @@ Read in this order (stop after 5 minutes total):
 
 **IMPORTANT**: Generate HTML by string substitution, NOT by complex rendering.
 
-1. Read the template file at `~/.claude/skills/talk-to-codebase/template.html`
+#### Choose Your Style
+
+Two design styles are available:
+
+1. **Editorial Style (Default)** — `template.html`
+   - Warm editorial aesthetic with dark mode
+   - Terracotta and sage green accents
+   - Magazine-style asymmetric grid
+   - Professional and approachable
+
+2. **Bauhaus Style** — `template-bauhaus.html`
+   - Industrial geometric design
+   - Primary colors: red, yellow, blue
+   - Bold right angles and shapes (circle, square, triangle)
+   - Futura-style typography
+   - Strong contrast and hierarchy
+   - See `references/bauhaus-style.md` for full design system
+
+**Default:** If user doesn't specify, use `template.html` (editorial style).
+
+**If user specifies style:** Look for keywords like "Bauhaus", "geometric", "industrial", "primary colors", "red/yellow/blue" → use `template-bauhaus.html`.
+
+#### Generation Steps
+
+1. Read the appropriate template file:
+   - Editorial: `~/.claude/skills/talk-to-codebase/template.html`
+   - Bauhaus: `~/.claude/skills/talk-to-codebase/template-bauhaus.html`
 2. Replace placeholders with actual data from exploration:
 
 **Required Placeholders**:

@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>talk-to-codebase — Codebase Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    /* Bauhaus Design System */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Bauhaus Primary Colors */
+      --bauhaus-red: #E1000F;
+      --bauhaus-yellow: #FFD700;
+      --bauhaus-blue: #0033A0;
+      --bauhaus-black: #000000;
+      --bauhaus-white: #FFFFFF;
+      --bauhaus-gray: #CCCCCC;
+      --bauhaus-light-gray: #F5F5F5;
+
+      /* Typography */
+      --font-geometric: 'Montserrat', 'Futura', sans-serif;
+      --text-xs: 0.75rem;
+      --text-sm: 0.875rem;
+      --text-base: 1rem;
+      --text-lg: 1.125rem;
+      --text-xl: 1.5rem;
+      --text-2xl: 2rem;
+      --text-3xl: 2.5rem;
+      --text-4xl: 3rem;
+
+      /* Spacing (8pt grid) */
+      --space-1: 8px;
+      --space-2: 16px;
+      --space-3: 24px;
+      --space-4: 32px;
+      --space-5: 40px;
+      --space-6: 48px;
+      --space-8: 64px;
+      --space-10: 80px;
+    }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      font-family: var(--font-geometric);
+      background: var(--bauhaus-white);
+      color: var(--bauhaus-black);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Skip Link */
+    .skip-link {
+      position: absolute;
+      top: -50px;
+      left: 0;
+      background: var(--bauhaus-black);
+      color: var(--bauhaus-white);
+      padding: var(--space-1) var(--space-2);
+      text-decoration: none;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      z-index: 1000;
+    }
+    .skip-link:focus { top: 0; }
+
+    /* Geometric Shapes */
+    .shape-circle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: var(--space-2);
+    }
+    .shape-square {
+      width: 60px;
+      height: 60px;
+      display: inline-block;
+      margin-right: var(--space-2);
+    }
+    .shape-triangle {
+      width: 0;
+      height: 0;
+      border-left: 30px solid transparent;
+      border-right: 30px solid transparent;
+      border-bottom: 60px solid currentColor;
+      display: inline-block;
+      margin-right: var(--space-2);
+    }
+
+    /* Header — Bold Geometric */
+    header {
+      background: var(--bauhaus-black);
+      color: var(--bauhaus-white);
+      padding: var(--space-4) var(--space-3);
+      border-bottom: 8px solid var(--bauhaus-red);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    header h1 {
+      font-size: var(--text-3xl);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: var(--space-1);
+    }
+
+    header .subtitle {
+      font-size: var(--text-sm);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--bauhaus-gray);
+      font-weight: 600;
+    }
+
+    /* Navigation — Industrial Grid */
+    nav {
+      background: var(--bauhaus-light-gray);
+      border-right: 4px solid var(--bauhaus-blue);
+      position: sticky;
+      top: 120px;
+      height: calc(100vh - 120px);
+      overflow-y: auto;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: var(--space-2);
+    }
+
+    nav li {
+      margin-bottom: var(--space-1);
+    }
+
+    nav a {
+      display: block;
+      padding: var(--space-2);
+      color: var(--bauhaus-black);
+      text-decoration: none;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: var(--text-xs);
+      letter-spacing: 1px;
+      border-left: 4px solid transparent;
+      transition: all 150ms;
+    }
+
+    nav a:hover,
+    nav a:focus {
+      background: var(--bauhaus-yellow);
+      border-left-color: var(--bauhaus-red);
+      outline: 2px solid var(--bauhaus-black);
+      outline-offset: -2px;
+    }
+
+    /* Layout */
+    .container {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    main {
+      padding: var(--space-6) var(--space-4);
+      background: var(--bauhaus-white);
+    }
+
+    /* Section Headers — Geometric Accents */
+    section {
+      margin-bottom: var(--space-8);
+      position: relative;
+    }
+
+    section h2 {
+      font-size: var(--text-2xl);
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: var(--space-3);
+      padding-left: 80px;
+      position: relative;
+    }
+
+    section h2::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 60px;
+      height: 60px;
+      background: var(--bauhaus-blue);
+    }
+
+    section:nth-child(2) h2::before { background: var(--bauhaus-red); border-radius: 50%; }
+    section:nth-child(3) h2::before { background: var(--bauhaus-yellow); }
+    section:nth-child(4) h2::before { background: var(--bauhaus-blue); border-radius: 50%; }
+    section:nth-child(5) h2::before { background: var(--bauhaus-red); }
+    section:nth-child(6) h2::before { background: var(--bauhaus-yellow); border-radius: 50%; }
+    section:nth-child(7) h2::before { background: var(--bauhaus-blue); }
+
+    /* Cards — Geometric Grid */
+    .card {
+      background: var(--bauhaus-white);
+      border: 4px solid var(--bauhaus-black);
+      padding: var(--space-3);
+      margin-bottom: var(--space-3);
+      position: relative;
+    }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      right: -8px;
+      width: 100%;
+      height: 100%;
+      background: var(--bauhaus-light-gray);
+      z-index: -1;
+    }
+
+    .card h3,
+    .card h4 {
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: var(--space-2);
+      color: var(--bauhaus-black);
+    }
+
+    .card h3 { font-size: var(--text-xl); }
+    .card h4 { font-size: var(--text-lg); }
+
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .card li {
+      padding: var(--space-1) 0;
+      padding-left: var(--space-3);
+      position: relative;
+      border-left: 3px solid var(--bauhaus-gray);
+    }
+
+    .card li::before {
+      content: '';
+      position: absolute;
+      left: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      background: var(--bauhaus-red);
+    }
+
+    .card li:nth-child(3n+1)::before { background: var(--bauhaus-red); }
+    .card li:nth-child(3n+2)::before { background: var(--bauhaus-yellow); }
+    .card li:nth-child(3n)::before { background: var(--bauhaus-blue); }
+
+    /* Grid Layout for Cards */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+
+    /* Meta Info — Industrial Typography */
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+    }
+
+    .meta-item {
+      background: var(--bauhaus-black);
+      color: var(--bauhaus-white);
+      padding: var(--space-2);
+      border-left: 8px solid var(--bauhaus-red);
+    }
+
+    .meta-item:nth-child(3n+2) { border-left-color: var(--bauhaus-yellow); }
+    .meta-item:nth-child(3n) { border-left-color: var(--bauhaus-blue); }
+
+    .meta-label {
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 700;
+      color: var(--bauhaus-gray);
+      margin-bottom: var(--space-1);
+    }
+
+    .meta-value {
+      font-size: var(--text-base);
+      font-weight: 600;
+    }
+
+    /* Flow Diagram — Geometric Connections */
+    .flow {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-4);
+      background: var(--bauhaus-light-gray);
+      border: 4px solid var(--bauhaus-black);
+      margin-bottom: var(--space-4);
+      overflow-x: auto;
+    }
+
+    .flow-step {
+      background: var(--bauhaus-white);
+      border: 3px solid var(--bauhaus-black);
+      padding: var(--space-3);
+      min-width: 180px;
+      text-align: center;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: var(--text-sm);
+      position: relative;
+    }
+
+    .flow-step::before {
+      content: '';
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 24px;
+      height: 24px;
+      background: var(--bauhaus-red);
+    }
+
+    .flow-step:nth-child(1)::before { background: var(--bauhaus-red); border-radius: 50%; }
+    .flow-step:nth-child(2)::before { background: var(--bauhaus-yellow); }
+    .flow-step:nth-child(3)::before { background: var(--bauhaus-blue); border-radius: 50%; }
+    .flow-step:nth-child(4)::before { background: var(--bauhaus-red); }
+
+    .flow-arrow {
+      font-size: var(--text-2xl);
+      font-weight: 900;
+      color: var(--bauhaus-red);
+    }
+
+    /* Table — Grid Structure */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 4px solid var(--bauhaus-black);
+      margin-bottom: var(--space-4);
+    }
+
+    thead {
+      background: var(--bauhaus-black);
+      color: var(--bauhaus-white);
+    }
+
+    th {
+      padding: var(--space-2);
+      text-align: left;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: var(--text-sm);
+    }
+
+    td {
+      padding: var(--space-2);
+      border-bottom: 2px solid var(--bauhaus-light-gray);
+    }
+
+    tbody tr:nth-child(odd) {
+      background: var(--bauhaus-white);
+    }
+
+    tbody tr:nth-child(even) {
+      background: var(--bauhaus-light-gray);
+    }
+
+    tbody tr:hover {
+      background: var(--bauhaus-yellow);
+      outline: 2px solid var(--bauhaus-black);
+      outline-offset: -2px;
+    }
+
+    /* Code — Monospace Industrial */
+    code {
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      background: var(--bauhaus-light-gray);
+      padding: 2px 6px;
+      border: 1px solid var(--bauhaus-black);
+      font-size: var(--text-sm);
+    }
+
+    pre {
+      background: var(--bauhaus-black);
+      color: var(--bauhaus-white);
+      padding: var(--space-3);
+      overflow-x: auto;
+      border-left: 8px solid var(--bauhaus-red);
+      margin-bottom: var(--space-3);
+    }
+
+    pre code {
+      background: transparent;
+      border: none;
+      color: var(--bauhaus-white);
+    }
+
+    /* Badge — Geometric Tags */
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      font-size: var(--text-xs);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: var(--bauhaus-red);
+      color: var(--bauhaus-white);
+      margin-right: var(--space-1);
+      margin-bottom: var(--space-1);
+    }
+
+    .badge-yellow { background: var(--bauhaus-yellow); color: var(--bauhaus-black); }
+    .badge-blue { background: var(--bauhaus-blue); color: var(--bauhaus-white); }
+
+    /* Priority Indicators */
+    .priority-high::before {
+      content: '';
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      background: var(--bauhaus-red);
+      margin-right: var(--space-1);
+      border-radius: 50%;
+    }
+
+    .priority-medium::before {
+      content: '';
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      background: var(--bauhaus-yellow);
+      margin-right: var(--space-1);
+    }
+
+    .priority-low::before {
+      content: '';
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      background: var(--bauhaus-blue);
+      margin-right: var(--space-1);
+      border-radius: 50%;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+
+      nav {
+        position: static;
+        height: auto;
+        border-right: none;
+        border-bottom: 4px solid var(--bauhaus-blue);
+      }
+
+      section h2 {
+        padding-left: 0;
+        padding-top: 70px;
+      }
+
+      section h2::before {
+        top: 0;
+        left: 0;
+      }
+
+      .flow {
+        flex-direction: column;
+      }
+
+      .flow-arrow {
+        transform: rotate(90deg);
+      }
+    }
+
+    /* Accessibility */
+    *:focus-visible {
+      outline: 3px solid var(--bauhaus-red);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* Print Styles */
+    @media print {
+      nav { display: none; }
+      .container { grid-template-columns: 1fr; }
+      header { position: static; }
+      .card::after { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to Main Content</a>
+
+  <header role="banner">
+    <h1>talk-to-codebase</h1>
+    <p class="subtitle">Codebase Documentation Guide</p>
+    <p class="subtitle">Generated: March 31, 2026</p>
+  </header>
+
+  <div class="container">
+    <nav role="navigation" aria-label="Table of Contents">
+      <ul>
+        <li><a href="#overview">01 Overview</a></li>
+        <li><a href="#architecture">02 Architecture</a></li>
+        <li><a href="#flows">03 Core Flows</a></li>
+        <li><a href="#files">04 Key Files</a></li>
+        <li><a href="#data">05 Data Layer</a></li>
+        <li><a href="#integrations">06 Integrations</a></li>
+        <li><a href="#onboarding">07 Onboarding</a></li>
+      </ul>
+    </nav>
+
+    <main id="main-content" role="main">
+      <!-- Overview Section -->
+      <section id="overview">
+        <h2>Overview</h2>
+
+        <div class="meta">
+          <div class="meta-item">
+            <div class="meta-label">Language</div>
+            <div class="meta-value">Markdown / HTML</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">System Type</div>
+            <div class="meta-value">CLI Tool / Skill</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Framework</div>
+            <div class="meta-value">Claude Code Skill</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Entry Point</div>
+            <div class="meta-value">SKILL.md</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Lines of Code</div>
+            <div class="meta-value">~800 (Skill + Template)</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Files</div>
+            <div class="meta-value">5 total files</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>What It Does</h3>
+          <p>
+            <strong>talk-to-codebase</strong> is a Claude Code skill that generates professional HTML documentation for any codebase in under 2 minutes.
+            It helps developers understand approximately 80% of a repository within 30 minutes by analyzing key files and creating an interactive guide.
+          </p>
+          <p style="margin-top: 1rem;">
+            The skill performs rapid exploration of repository structure, identifies critical files, traces core workflows, and generates
+            a comprehensive HTML guide with sections covering overview, architecture, data flows, key files, integrations, and onboarding paths.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Tech Stack</h3>
+          <div>
+            <span class="badge">Markdown</span>
+            <span class="badge badge-yellow">HTML5</span>
+            <span class="badge badge-blue">CSS3</span>
+            <span class="badge">Claude Code</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Key Features</h3>
+          <ul>
+            <li>Fast Generation — Completes analysis and HTML generation in under 2 minutes</li>
+            <li>Language Agnostic — Works with Java, Python, Go, TypeScript, and more</li>
+            <li>WCAG AA Accessible — 4.5:1 contrast ratios, keyboard navigation, screen reader support</li>
+            <li>Responsive Design — Mobile-first layout with 44px touch targets</li>
+            <li>Interactive UI — Sticky navigation, collapsible sections, search functionality</li>
+            <li>Customizable — Template-based with CSS variables for easy styling</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Architecture Section -->
+      <section id="architecture">
+        <h2>Architecture</h2>
+
+        <div class="card">
+          <h3>System Components</h3>
+          <p>The skill operates as a three-phase pipeline with clear separation of concerns:</p>
+        </div>
+
+        <div class="card-grid">
+          <div class="card">
+            <h4>Phase 1: Exploration</h4>
+            <ul>
+              <li>Repository structure scanning</li>
+              <li>Key file identification (README, entry points, controllers)</li>
+              <li>Pattern inference from filenames</li>
+              <li>Approximate metrics calculation</li>
+            </ul>
+            <p style="margin-top: 1rem;"><strong>Time Budget:</strong> 30 seconds maximum</p>
+          </div>
+
+          <div class="card">
+            <h4>Phase 2: Generation</h4>
+            <ul>
+              <li>Template loading from <code>template.html</code></li>
+              <li>String substitution for all placeholders</li>
+              <li>HTML structure preservation</li>
+              <li>No complex rendering or transformation</li>
+            </ul>
+            <p style="margin-top: 1rem;"><strong>Time Budget:</strong> 60 seconds maximum</p>
+          </div>
+
+          <div class="card">
+            <h4>Phase 3: Delivery</h4>
+            <ul>
+              <li>Write HTML file to disk</li>
+              <li>User notification with filename</li>
+              <li>No automatic browser opening</li>
+            </ul>
+            <p style="margin-top: 1rem;"><strong>Time Budget:</strong> 10 seconds maximum</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Design Principles</h3>
+          <ul>
+            <li><strong>Speed over Perfection</strong> — Complete in under 2 minutes, read max 5-6 files</li>
+            <li><strong>Signal over Noise</strong> — Focus on core flows, skip tests and configs initially</li>
+            <li><strong>Inference over Analysis</strong> — Use filenames and structure to understand patterns</li>
+            <li><strong>Template over Generation</strong> — String substitution only, no complex HTML rendering</li>
+            <li><strong>Accessibility First</strong> — WCAG AA compliance built into template</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Core Flows Section -->
+      <section id="flows">
+        <h2>Core Flows</h2>
+
+        <div class="card">
+          <h3>Flow 1: Skill Invocation</h3>
+          <div class="flow">
+            <div class="flow-step">User runs /talk-to-codebase</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">Claude Code loads SKILL.md</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">Skill instructions activate</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">Exploration begins</div>
+          </div>
+          <p><strong>Trigger:</strong> User command in Claude Code interface or via <code>/talk-to-codebase</code> slash command</p>
+          <p><strong>Output:</strong> Skill workflow initiated with repository path context</p>
+        </div>
+
+        <div class="card">
+          <h3>Flow 2: Repository Analysis</h3>
+          <div class="flow">
+            <div class="flow-step">Scan directory structure</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">Identify tech stack (package.json, build.gradle, etc.)</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">Read README + 4-5 core files</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">Extract patterns & flows</div>
+          </div>
+          <p><strong>Input:</strong> Repository path (local or GitHub URL)</p>
+          <p><strong>Output:</strong> Structured data with tech stack, entry points, key files, and architectural patterns</p>
+        </div>
+
+        <div class="card">
+          <h3>Flow 3: HTML Generation</h3>
+          <div class="flow">
+            <div class="flow-step">Load template.html</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">Replace placeholders with extracted data</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">Write {repo-name}-guide.html</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">Notify user</div>
+          </div>
+          <p><strong>Input:</strong> Template file + extracted repository data</p>
+          <p><strong>Output:</strong> Self-contained HTML file with interactive codebase documentation</p>
+        </div>
+      </section>
+
+      <!-- Key Files Section -->
+      <section id="files">
+        <h2>Key Files</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Priority</th>
+              <th>File</th>
+              <th>Purpose</th>
+              <th>Why Important</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="priority-high">HIGH</span></td>
+              <td><code>SKILL.md</code></td>
+              <td>Skill Definition</td>
+              <td>Core logic and workflow instructions for Claude Code. Defines exploration strategy, generation rules, and time constraints.</td>
+            </tr>
+            <tr>
+              <td><span class="priority-high">HIGH</span></td>
+              <td><code>template.html</code></td>
+              <td>HTML Template</td>
+              <td>Output template with placeholders. Contains complete HTML structure, CSS styling, and JavaScript for interactivity.</td>
+            </tr>
+            <tr>
+              <td><span class="priority-medium">MEDIUM</span></td>
+              <td><code>README.md</code></td>
+              <td>Documentation</td>
+              <td>Installation instructions, usage examples, and customization guide. Primary user-facing documentation.</td>
+            </tr>
+            <tr>
+              <td><span class="priority-low">LOW</span></td>
+              <td><code>.gitignore</code></td>
+              <td>Git Configuration</td>
+              <td>Specifies files to exclude from version control (node_modules, generated HTML files, etc.).</td>
+            </tr>
+            <tr>
+              <td><span class="priority-low">LOW</span></td>
+              <td><code>LICENSE</code></td>
+              <td>Legal</td>
+              <td>MIT license specifying terms of use and distribution for the skill.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="card">
+          <h3>File Organization</h3>
+          <pre><code>talk-to-codebase/
+├── SKILL.md           # Skill definition (185 lines)
+├── template.html      # HTML template (619 lines)
+├── README.md          # User documentation
+├── LICENSE            # MIT license
+└── .gitignore         # Git exclusions</code></pre>
+        </div>
+      </section>
+
+      <!-- Data Layer Section -->
+      <section id="data">
+        <h2>Data Layer</h2>
+
+        <div class="card">
+          <h3>No Database</h3>
+          <p>This is a stateless CLI tool with no persistent storage. All data is ephemeral and scoped to a single execution.</p>
+        </div>
+
+        <div class="card">
+          <h3>Data Flow</h3>
+          <ul>
+            <li><strong>Input:</strong> Repository path (filesystem or GitHub URL)</li>
+            <li><strong>Processing:</strong> In-memory analysis of file contents and structure</li>
+            <li><strong>Output:</strong> Single HTML file written to disk</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Key Data Structures</h3>
+          <ul>
+            <li><strong>Repository Metadata</strong> — Name, description, language, framework, line count</li>
+            <li><strong>File Inventory</strong> — List of key files with priorities and descriptions</li>
+            <li><strong>Architecture Model</strong> — Component layers and data flow patterns</li>
+            <li><strong>Request Traces</strong> — 2-3 critical workflows from entry to exit</li>
+            <li><strong>Integration Points</strong> — External services, APIs, databases</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Template Placeholders</h3>
+          <p>The template uses 20+ placeholders replaced via string substitution:</p>
+          <div style="margin-top: 1rem;">
+            <span class="badge">{{SERVICE_NAME}}</span>
+            <span class="badge badge-yellow">{{DESCRIPTION}}</span>
+            <span class="badge badge-blue">{{LANGUAGE}}</span>
+            <span class="badge">{{FRAMEWORK}}</span>
+            <span class="badge badge-yellow">{{DATABASE}}</span>
+            <span class="badge badge-blue">{{ENTRY_POINT}}</span>
+            <span class="badge">{{SYSTEM_TYPE}}</span>
+            <span class="badge badge-yellow">{{ARCHITECTURE_DETAILS}}</span>
+            <span class="badge badge-blue">{{CORE_FLOWS}}</span>
+            <span class="badge">{{KEY_FILES_ROWS}}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Integration Points Section -->
+      <section id="integrations">
+        <h2>Integration Points</h2>
+
+        <div class="card">
+          <h3>Claude Code Platform</h3>
+          <ul>
+            <li><strong>Installation:</strong> Skill installed via <code>~/.claude/skills/</code> directory</li>
+            <li><strong>Invocation:</strong> Command-line interface via <code>/talk-to-codebase</code></li>
+            <li><strong>Execution:</strong> Claude Code parses SKILL.md and follows workflow instructions</li>
+            <li><strong>Output:</strong> File written to current working directory</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>GitHub Integration</h3>
+          <ul>
+            <li>Can fetch repositories via GitHub URL (requires web access)</li>
+            <li>Parses README, LICENSE, and source files from public repos</li>
+            <li>No authentication required for public repositories</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Filesystem Access</h3>
+          <ul>
+            <li>Reads local repository structure via <code>find</code>, <code>ls</code>, <code>cat</code> commands</li>
+            <li>Writes output HTML file to disk</li>
+            <li>No modification of source repository files</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>No External Services</h3>
+          <p>This skill operates entirely locally with no external API calls, databases, or cloud services.</p>
+        </div>
+      </section>
+
+      <!-- Onboarding Section -->
+      <section id="onboarding">
+        <h2>Onboarding Path</h2>
+
+        <div class="card">
+          <h3>Suggested Reading Order</h3>
+          <ol style="list-style: decimal; padding-left: var(--space-4);">
+            <li style="margin-bottom: var(--space-2);"><strong>README.md</strong> (5 min) — Understand purpose, installation, and basic usage</li>
+            <li style="margin-bottom: var(--space-2);"><strong>SKILL.md</strong> (15 min) — Study the skill workflow, rules, and constraints. This is the core logic.</li>
+            <li style="margin-bottom: var(--space-2);"><strong>template.html</strong> (20 min) — Review HTML structure, CSS styling, and placeholder system</li>
+            <li style="margin-bottom: var(--space-2);"><strong>Run the skill</strong> (10 min) — Execute <code>/talk-to-codebase</code> on a test repo to see output</li>
+            <li style="margin-bottom: var(--space-2);"><strong>Customize template</strong> (optional) — Modify colors, typography, and layout to match your style</li>
+          </ol>
+        </div>
+
+        <div class="card">
+          <h3>Quick Start</h3>
+          <pre><code># Install the skill
+cd ~/.claude/skills/
+git clone https://github.com/jingjingnotai/mindmap-explorer-
+mv mindmap-explorer-/talk-to-codebase ./
+
+# Or install via Claude Code marketplace
+/plugin marketplace add jingjingnotai/mindmap-explorer-
+/plugin install talk-to-codebase@mindmap-explorer-
+
+# Use the skill
+cd /path/to/your/repo
+/talk-to-codebase .
+
+# Output: {repo-name}-guide.html</code></pre>
+        </div>
+
+        <div class="card">
+          <h3>Key Concepts</h3>
+          <ul>
+            <li><strong>Time Budget:</strong> The skill enforces strict time limits — 30s exploration, 60s generation, 10s delivery</li>
+            <li><strong>Signal-Focused:</strong> Reads only 5-6 critical files, infers patterns from filenames and structure</li>
+            <li><strong>Template-Based:</strong> Uses string substitution (not complex rendering) for speed</li>
+            <li><strong>Accessibility:</strong> Output HTML meets WCAG AA standards with keyboard nav and screen reader support</li>
+            <li><strong>Customizable:</strong> Edit template.html to change colors, fonts, and layout</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Common Use Cases</h3>
+          <ul>
+            <li>New developer onboarding to an unfamiliar codebase</li>
+            <li>Documenting microservices architecture for team reference</li>
+            <li>Creating architectural diagrams and flow traces for PRs</li>
+            <li>Generating up-to-date documentation as part of CI/CD pipeline</li>
+            <li>Understanding open-source projects before contributing</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Next Steps</h3>
+          <p>After reviewing this guide:</p>
+          <ul>
+            <li>Try running the skill on your own repository</li>
+            <li>Customize the template to match your team's style guide</li>
+            <li>Create a skill hook to auto-generate docs on commit</li>
+            <li>Share generated HTML guides with your team</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Smooth scroll for navigation links
+    document.querySelectorAll('nav a').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href').slice(1);
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Highlight active section in navigation
+    const observerOptions = {
+      root: null,
+      rootMargin: '-20% 0px -70% 0px',
+      threshold: 0
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          document.querySelectorAll('nav a').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${id}`) {
+              link.classList.add('active');
+            }
+          });
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('section[id]').forEach(section => {
+      observer.observe(section);
+    });
+  </script>
+</body>
+</html>
