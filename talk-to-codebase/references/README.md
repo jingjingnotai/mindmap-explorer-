@@ -229,6 +229,7 @@ Both styles meet WCAG AA accessibility standards:
 
 - **Bauhaus Design System:** See `bauhaus-style.md` for complete design tokens and component patterns
 - **Neumorphism Design System:** See `neumorphism-style.md` for shadow system, color palette, and UI patterns
+- **Design Styles Catalog:** See `design-styles-catalog.md` for 15 additional design styles ready for implementation
 - **Editorial Guidelines:** (Coming soon)
 - **Custom Style Template:** (Coming soon)
 
