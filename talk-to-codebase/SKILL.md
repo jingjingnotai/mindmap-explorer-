@@ -26,10 +26,11 @@ An HTML file named `{repo-name}-guide.html` with:
 6. **Integration Points** — External services, APIs
 7. **Onboarding Path** — Suggested reading order
 
-**Design**: Three professional styles available:
+**Design**: Four professional styles available:
 - **Editorial** (default): Dark mode with warm terracotta/sage colors, magazine-style layout
 - **Bauhaus**: Industrial geometric design with red/yellow/blue primaries, bold shapes
 - **Neumorphism**: Soft UI with clay-like tactile interface, shadow-based depth, no hard borders
+- **Cyberpunk**: Neon terminal aesthetic with glitch effects, scanlines, and Matrix-style interface
 
 All styles follow UI/UX Pro Max principles — accessible (WCAG AA), responsive, keyboard-navigable, with semantic color tokens and optimized performance.
 
@@ -62,7 +63,7 @@ Read in this order (stop after 5 minutes total):
 
 #### Choose Your Style
 
-Three design styles are available:
+Four design styles are available:
 
 1. **Editorial Style (Default)** — `template.html`
    - Warm editorial aesthetic with dark mode
@@ -87,11 +88,21 @@ Three design styles are available:
    - Light source from top-left creates dual shadows
    - See `references/neumorphism-style.md` for full design system
 
+4. **Cyberpunk Style** — `template-cyberpunk.html`
+   - Deep black background with neon colors
+   - Cyan/pink/yellow neon text with glows
+   - JetBrains Mono terminal font
+   - Glitch-style animated headings
+   - Scanline effects and CRT screen aesthetics
+   - Blinking cursor and terminal interface
+   - See `references/design-styles-catalog.md` for full design system
+
 **Default:** If user doesn't specify, use `template.html` (editorial style).
 
 **If user specifies style:** 
 - Keywords like "Bauhaus", "geometric", "industrial", "primary colors", "red/yellow/blue" → use `template-bauhaus.html`
 - Keywords like "neumorphism", "soft UI", "clay", "tactile", "extruded", "pressed" → use `template-neumorphism.html`
+- Keywords like "cyberpunk", "neon", "terminal", "matrix", "hacker", "glitch" → use `template-cyberpunk.html`
 
 #### Generation Steps
 
@@ -99,6 +110,7 @@ Three design styles are available:
    - Editorial: `~/.claude/skills/talk-to-codebase/template.html`
    - Bauhaus: `~/.claude/skills/talk-to-codebase/template-bauhaus.html`
    - Neumorphism: `~/.claude/skills/talk-to-codebase/template-neumorphism.html`
+   - Cyberpunk: `~/.claude/skills/talk-to-codebase/template-cyberpunk.html`
 2. Replace placeholders with actual data from exploration:
 
 **Required Placeholders**:

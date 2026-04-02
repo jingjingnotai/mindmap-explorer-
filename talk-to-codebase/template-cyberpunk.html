@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{SERVICE_NAME}} — Codebase Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Cyberpunk Design Tokens */
+    :root {
+      --cyber-bg: #000;
+      --cyber-bg-elevated: #0a0a0a;
+      --cyber-cyan: #00FFFF;
+      --cyber-pink: #FF00FF;
+      --cyber-yellow: #FFFF00;
+      --cyber-green: #00FF00;
+      --cyber-white: #E0E0E0;
+      --cyber-gray: #808080;
+
+      /* Neon Glows */
+      --glow-cyan: 0 0 10px #00FFFF, 0 0 20px #00FFFF, 0 0 30px #00FFFF;
+      --glow-pink: 0 0 10px #FF00FF, 0 0 20px #FF00FF, 0 0 30px #FF00FF;
+      --glow-yellow: 0 0 10px #FFFF00, 0 0 20px #FFFF00;
+      --glow-green: 0 0 10px #00FF00, 0 0 20px #00FF00;
+
+      /* Typography */
+      --font-primary: 'JetBrains Mono', 'Courier New', monospace;
+      --text-xs: 0.75rem;
+      --text-sm: 0.875rem;
+      --text-base: 1rem;
+      --text-lg: 1.125rem;
+      --text-xl: 1.25rem;
+      --text-2xl: 1.5rem;
+      --text-3xl: 1.875rem;
+
+      /* Spacing */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-12: 48px;
+      --space-16: 64px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: var(--font-primary);
+      background: var(--cyber-bg);
+      color: var(--cyber-cyan);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      position: relative;
+    }
+
+    /* Scanline Effect Overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 255, 255, 0.03),
+        rgba(0, 255, 255, 0.03) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* CRT Screen Flicker */
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.97; }
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.3) 100%);
+      pointer-events: none;
+      z-index: 9998;
+      animation: flicker 0.15s infinite;
+    }
+
+    /* Skip Link */
+    .skip-link {
+      position: absolute;
+      top: -50px;
+      left: 0;
+      background: var(--cyber-cyan);
+      color: var(--cyber-bg);
+      padding: var(--space-2) var(--space-4);
+      text-decoration: none;
+      z-index: 10000;
+      font-weight: 700;
+      border: 2px solid var(--cyber-cyan);
+    }
+    .skip-link:focus {
+      top: var(--space-2);
+      box-shadow: var(--glow-cyan);
+    }
+
+    /* Header — Terminal Style */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--cyber-bg);
+      border-bottom: 2px solid var(--cyber-cyan);
+      padding: var(--space-4) var(--space-6);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+    }
+
+    .header-content {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .service-title {
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      color: var(--cyber-cyan);
+      margin: 0;
+      text-shadow: var(--glow-cyan);
+      animation: glitch 3s infinite;
+    }
+
+    /* Glitch Effect on Headings */
+    @keyframes glitch {
+      0%, 90%, 100% {
+        transform: translate(0);
+        text-shadow: var(--glow-cyan);
+      }
+      92% {
+        transform: translate(-2px, 1px);
+        text-shadow: var(--glow-pink);
+      }
+      94% {
+        transform: translate(2px, -1px);
+        text-shadow: var(--glow-green);
+      }
+      96% {
+        transform: translate(-1px, 2px);
+        text-shadow: var(--glow-yellow);
+      }
+    }
+
+    .generated-date {
+      font-size: var(--text-sm);
+      color: var(--cyber-green);
+      text-shadow: var(--glow-green);
+    }
+
+    /* Blinking Cursor */
+    .generated-date::after {
+      content: '▊';
+      animation: blink 1s step-end infinite;
+      color: var(--cyber-green);
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    /* Main Layout */
+    main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: var(--space-8) var(--space-4);
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (min-width: 768px) {
+      main {
+        padding: var(--space-12) var(--space-8);
+      }
+    }
+
+    /* Navigation — Terminal Menu */
+    nav {
+      background: var(--cyber-bg-elevated);
+      border: 2px solid var(--cyber-pink);
+      padding: var(--space-4);
+      margin-bottom: var(--space-8);
+      box-shadow: var(--glow-pink);
+    }
+
+    nav h2 {
+      font-size: var(--text-sm);
+      font-weight: 700;
+      margin-bottom: var(--space-3);
+      color: var(--cyber-pink);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      text-shadow: var(--glow-pink);
+    }
+
+    nav h2::before {
+      content: '> ';
+      color: var(--cyber-yellow);
+    }
+
+    nav ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-2);
+    }
+
+    nav a {
+      display: flex;
+      align-items: center;
+      padding: var(--space-2) var(--space-3);
+      color: var(--cyber-cyan);
+      text-decoration: none;
+      font-size: var(--text-sm);
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      min-height: 44px;
+    }
+
+    nav a::before {
+      content: '$ ';
+      margin-right: var(--space-2);
+      color: var(--cyber-yellow);
+    }
+
+    nav a:hover,
+    nav a:focus-visible {
+      background: rgba(0, 255, 255, 0.1);
+      border: 1px solid var(--cyber-cyan);
+      color: var(--cyber-yellow);
+      box-shadow: var(--glow-cyan);
+      text-shadow: var(--glow-yellow);
+      outline: none;
+    }
+
+    /* Section Styles */
+    section {
+      margin-bottom: var(--space-16);
+      scroll-margin-top: 100px;
+    }
+
+    section h2 {
+      font-size: var(--text-3xl);
+      font-weight: 700;
+      margin-bottom: var(--space-6);
+      color: var(--cyber-pink);
+      border-left: 4px solid var(--cyber-pink);
+      padding-left: var(--space-4);
+      text-shadow: var(--glow-pink);
+      animation: glitch 5s infinite;
+    }
+
+    section h2::before {
+      content: '// ';
+      color: var(--cyber-gray);
+      text-shadow: none;
+    }
+
+    section h3 {
+      font-size: var(--text-xl);
+      font-weight: 600;
+      margin: var(--space-6) 0 var(--space-3);
+      color: var(--cyber-yellow);
+      text-shadow: var(--glow-yellow);
+    }
+
+    section h3::before {
+      content: '> ';
+      color: var(--cyber-cyan);
+    }
+
+    section p {
+      color: var(--cyber-white);
+      margin-bottom: var(--space-4);
+      line-height: 1.7;
+    }
+
+    /* Card Component — Terminal Windows */
+    .card {
+      background: var(--cyber-bg-elevated);
+      border: 2px solid var(--cyber-cyan);
+      padding: var(--space-6);
+      margin-bottom: var(--space-4);
+      transition: all 0.3s ease;
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    }
+
+    .card:hover {
+      border-color: var(--cyber-pink);
+      box-shadow: var(--glow-pink);
+      transform: translateX(4px);
+    }
+
+    .card h4 {
+      font-size: var(--text-lg);
+      font-weight: 600;
+      margin-bottom: var(--space-3);
+      color: var(--cyber-green);
+      text-shadow: var(--glow-green);
+    }
+
+    .card h4::before {
+      content: '[+] ';
+      color: var(--cyber-yellow);
+    }
+
+    /* Table Styles — Terminal Data */
+    .table-wrapper {
+      overflow-x: auto;
+      margin: var(--space-4) 0;
+      border: 2px solid var(--cyber-green);
+      box-shadow: var(--glow-green);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--text-sm);
+      background: var(--cyber-bg-elevated);
+    }
+
+    thead {
+      background: rgba(0, 255, 0, 0.1);
+    }
+
+    th {
+      text-align: left;
+      padding: var(--space-3) var(--space-4);
+      font-weight: 700;
+      color: var(--cyber-green);
+      border-bottom: 2px solid var(--cyber-green);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: var(--text-xs);
+      text-shadow: var(--glow-green);
+    }
+
+    td {
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid var(--cyber-gray);
+      color: var(--cyber-white);
+    }
+
+    tr:hover {
+      background: rgba(0, 255, 255, 0.05);
+    }
+
+    /* Code Styles — Inline Terminal */
+    code {
+      font-family: var(--font-primary);
+      background: var(--cyber-bg-elevated);
+      border: 1px solid var(--cyber-yellow);
+      padding: 2px 6px;
+      font-size: 0.9em;
+      color: var(--cyber-yellow);
+      text-shadow: var(--glow-yellow);
+    }
+
+    pre {
+      background: var(--cyber-bg-elevated);
+      border: 2px solid var(--cyber-cyan);
+      padding: var(--space-4);
+      overflow-x: auto;
+      margin: var(--space-4) 0;
+      box-shadow: var(--glow-cyan);
+    }
+
+    pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: var(--cyber-cyan);
+      font-size: var(--text-sm);
+      line-height: 1.6;
+    }
+
+    /* List Styles */
+    ul, ol {
+      margin: var(--space-4) 0;
+      padding-left: var(--space-6);
+      color: var(--cyber-white);
+    }
+
+    li {
+      margin-bottom: var(--space-2);
+      line-height: 1.7;
+    }
+
+    li::marker {
+      color: var(--cyber-yellow);
+    }
+
+    /* Badge Component — Terminal Tags */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: var(--space-1) var(--space-3);
+      background: var(--cyber-bg-elevated);
+      border: 1px solid var(--cyber-cyan);
+      font-size: var(--text-xs);
+      font-weight: 700;
+      color: var(--cyber-cyan);
+      margin-right: var(--space-2);
+      margin-bottom: var(--space-2);
+      text-shadow: var(--glow-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-success { border-color: var(--cyber-green); color: var(--cyber-green); text-shadow: var(--glow-green); }
+    .badge-warning { border-color: var(--cyber-yellow); color: var(--cyber-yellow); text-shadow: var(--glow-yellow); }
+    .badge-error { border-color: var(--cyber-pink); color: var(--cyber-pink); text-shadow: var(--glow-pink); }
+
+    /* Flow Diagram — Data Pipeline */
+    .flow {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+      margin: var(--space-6) 0;
+      padding: var(--space-6);
+      background: var(--cyber-bg-elevated);
+      border: 2px solid var(--cyber-pink);
+      box-shadow: var(--glow-pink);
+    }
+
+    .flow-step {
+      padding: var(--space-3) var(--space-4);
+      background: var(--cyber-bg);
+      border: 2px solid var(--cyber-cyan);
+      font-family: var(--font-primary);
+      font-size: var(--text-sm);
+      color: var(--cyber-cyan);
+      font-weight: 600;
+      text-shadow: var(--glow-cyan);
+      box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    }
+
+    .flow-arrow {
+      color: var(--cyber-yellow);
+      font-size: var(--text-xl);
+      font-weight: 700;
+      text-shadow: var(--glow-yellow);
+    }
+
+    /* Architecture Diagram */
+    .arch-diagram {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-8);
+      margin: var(--space-8) 0;
+      padding: var(--space-6);
+      background: var(--cyber-bg-elevated);
+      border: 2px solid var(--cyber-green);
+      box-shadow: var(--glow-green);
+    }
+
+    .arch-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-6);
+      flex-wrap: wrap;
+    }
+
+    .arch-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-2);
+      min-width: 120px;
+    }
+
+    .arch-icon {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      background: var(--cyber-bg);
+      border: 2px solid var(--cyber-cyan);
+      box-shadow: var(--glow-cyan);
+      transition: all 0.3s ease;
+    }
+
+    .arch-icon:hover {
+      border-color: var(--cyber-pink);
+      box-shadow: var(--glow-pink);
+      transform: scale(1.1);
+    }
+
+    .arch-label {
+      font-size: var(--text-sm);
+      color: var(--cyber-cyan);
+      text-align: center;
+      font-weight: 600;
+      text-shadow: var(--glow-cyan);
+    }
+
+    .arch-arrow {
+      color: var(--cyber-yellow);
+      font-size: var(--text-3xl);
+      font-weight: 700;
+      text-shadow: var(--glow-yellow);
+    }
+
+    @media (max-width: 768px) {
+      .arch-row {
+        flex-direction: column;
+      }
+
+      .arch-arrow {
+        transform: rotate(90deg);
+      }
+    }
+
+    /* Accessibility — Focus States */
+    *:focus-visible {
+      outline: 2px solid var(--cyber-yellow);
+      outline-offset: 2px;
+      box-shadow: var(--glow-yellow);
+    }
+
+    /* Print Styles */
+    @media print {
+      body::before, body::after { display: none; }
+      header { position: static; }
+      nav { display: none; }
+      .card { break-inside: avoid; }
+      * { text-shadow: none !important; box-shadow: none !important; }
+    }
+
+    /* Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* Mobile Optimizations */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2);
+      }
+
+      .service-title {
+        font-size: var(--text-xl);
+      }
+
+      section h2 {
+        font-size: var(--text-2xl);
+      }
+
+      .flow {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .flow-arrow {
+        transform: rotate(90deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main" class="skip-link">SKIP TO MAIN</a>
+
+  <header role="banner">
+    <div class="header-content">
+      <h1 class="service-title">{{SERVICE_NAME}}</h1>
+      <time class="generated-date" datetime="{{ISO_DATE}}">{{FRIENDLY_DATE}}</time>
+    </div>
+  </header>
+
+  <main id="main" role="main">
+    <nav aria-label="Table of contents">
+      <h2>System Menu</h2>
+      <ul>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#problem">Problem & Users</a></li>
+        <li><a href="#data-flow">Data Flow</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#core-flows">Core Flows</a></li>
+        <li><a href="#key-files">Key Files</a></li>
+        <li><a href="#data-layer">Data Layer</a></li>
+        <li><a href="#integration">Integration Points</a></li>
+        <li><a href="#onboarding">Onboarding Path</a></li>
+        <li><a href="#failure-modes">Failure Modes</a></li>
+        <li><a href="#coupling">Coupling Points</a></li>
+        <li><a href="#scaling">Scaling & Bottlenecks</a></li>
+      </ul>
+    </nav>
+
+    <!-- Overview Section -->
+    <section id="overview">
+      <h2>Overview</h2>
+
+      <div class="card">
+        <h4>What It Does</h4>
+        <p>{{DESCRIPTION}}</p>
+      </div>
+
+      <div class="card">
+        <h4>Tech Stack</h4>
+        <ul>
+          <li><strong>Language:</strong> {{LANGUAGE}}</li>
+          <li><strong>Framework:</strong> {{FRAMEWORK}}</li>
+          <li><strong>Database:</strong> {{DATABASE}}</li>
+          <li><strong>Key Libraries:</strong> {{LIBRARIES}}</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h4>Key Metrics</h4>
+        <ul>
+          <li><strong>Lines of Code:</strong> {{LOC}}</li>
+          <li><strong>Entry Point:</strong> <code>{{ENTRY_POINT}}</code></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section id="problem">
+      <h2>What Problem Does This Solve</h2>
+      {{PE_QUESTION_1}}
+    </section>
+
+    <!-- Data Flow Section -->
+    <section id="data-flow">
+      <h2>Data Flow</h2>
+      {{PE_QUESTION_2}}
+    </section>
+
+    <!-- Architecture Section -->
+    <section id="architecture">
+      <h2>Architecture</h2>
+
+      <p><span class="badge">{{SYSTEM_TYPE}}</span></p>
+
+      <h3>System Diagram</h3>
+      <div class="arch-diagram" role="img" aria-label="Architecture diagram">
+        {{ARCHITECTURE_DIAGRAM}}
+      </div>
+
+      <h3>High-Level Flow</h3>
+      <div class="flow" role="img" aria-label="System flow diagram">
+        <span class="flow-step">{{FLOW_START}}</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">{{FLOW_LAYER1}}</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">{{FLOW_LAYER2}}</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">{{FLOW_END}}</span>
+      </div>
+
+      {{ARCHITECTURE_DETAILS}}
+    </section>
+
+    <!-- Core Flows Section -->
+    <section id="core-flows">
+      <h2>Core Flows</h2>
+      {{CORE_FLOWS}}
+    </section>
+
+    <!-- Key Files Section -->
+    <section id="key-files">
+      <h2>Key Files</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Priority</th>
+              <th>File</th>
+              <th>Purpose</th>
+              <th>Read When</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{KEY_FILES_ROWS}}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Data Layer Section -->
+    <section id="data-layer">
+      <h2>Data Layer</h2>
+      {{DATA_LAYER}}
+    </section>
+
+    <!-- Integration Points Section -->
+    <section id="integration">
+      <h2>Integration Points</h2>
+      {{INTEGRATION_POINTS}}
+    </section>
+
+    <!-- Onboarding Path Section -->
+    <section id="onboarding">
+      <h2>Onboarding Path</h2>
+
+      <div class="card">
+        <h4>Day 1: Understand the Big Picture</h4>
+        <ol>
+          <li>Read this guide (30 min)</li>
+          <li>Read main entry file (15 min)</li>
+          <li>Trace one request end-to-end (45 min)</li>
+        </ol>
+      </div>
+
+      <div class="card">
+        <h4>Week 1: Core Domain Knowledge</h4>
+        <ol>
+          <li>Understand the main domain concepts</li>
+          <li>Read all Priority files</li>
+          <li>Run the service locally and make a test request</li>
+        </ol>
+      </div>
+
+      {{ONBOARDING_EXTRA}}
+    </section>
+
+    <!-- Failure Modes Section -->
+    <section id="failure-modes">
+      <h2>Failure Modes</h2>
+      {{PE_QUESTION_3}}
+    </section>
+
+    <!-- Coupling Points Section -->
+    <section id="coupling">
+      <h2>Coupling Points</h2>
+      {{PE_QUESTION_4}}
+    </section>
+
+    <!-- Scaling & Bottlenecks Section -->
+    <section id="scaling">
+      <h2>Scaling & Bottlenecks</h2>
+      {{PE_QUESTION_5}}
+    </section>
+  </main>
+
+  <script>
+    // Smooth scroll with reduced motion support
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          target.scrollIntoView({
+            behavior: reducedMotion ? 'auto' : 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Terminal typing effect for generated date
+    const dateEl = document.querySelector('.generated-date');
+    if (dateEl) {
+      const originalText = dateEl.textContent;
+      dateEl.textContent = '';
+      let i = 0;
+      const typeInterval = setInterval(() => {
+        if (i < originalText.length) {
+          dateEl.textContent += originalText.charAt(i);
+          i++;
+        } else {
+          clearInterval(typeInterval);
+        }
+      }, 50);
+    }
+  </script>
+</body>
+</html>
