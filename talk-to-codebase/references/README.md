@@ -4,7 +4,7 @@ This directory contains design system documentation and resources for the talk-t
 
 ## Available Styles
 
-The talk-to-codebase skill supports two distinct visual styles for generated HTML guides:
+The talk-to-codebase skill supports three distinct visual styles for generated HTML guides:
 
 ### 1. Editorial Style (Default)
 
@@ -53,6 +53,32 @@ The talk-to-codebase skill supports two distinct visual styles for generated HTM
 
 ---
 
+### 3. Neumorphism Style (Soft UI)
+
+**Template:** `template-neumorphism.html`  
+**Reference:** `neumorphism-style.md`
+
+**Aesthetic:**
+- Clay-like, tactile interface with shadow-based depth
+- Monochromatic #E0E5EC background (light gray-blue)
+- Dual shadow system: light from top-left, dark from bottom-right
+- Extruded shadows for raised elements (cards, buttons)
+- Pressed/inset shadows for recessed elements (inputs, navigation)
+- Poppins font with soft geometric letterforms
+- No hard borders, all rounded corners (8px-24px radius)
+- 8pt grid spacing system
+
+**Best for:**
+- Dashboards and internal tools requiring calm, focused interaction
+- Design-forward applications with minimal visual noise
+- Projects emphasizing tactile, physical UI metaphors
+- Teams preferring soft, approachable interfaces over high contrast
+
+**Example:**
+![Neumorphism Style Preview](https://via.placeholder.com/800x400/E0E5EC/667EEA?text=Neumorphism+Style)
+
+---
+
 ## Choosing a Style
 
 ### Automatic Selection
@@ -79,26 +105,34 @@ To specify a style, include keywords in your command:
 /talk-to-codebase . primary colors red yellow blue
 ```
 
+**For Neumorphism:**
+```bash
+/talk-to-codebase . neumorphism style
+/talk-to-codebase . soft UI
+/talk-to-codebase . clay tactile
+/talk-to-codebase . extruded pressed shadows
+```
+
 ---
 
 ## Style Comparison
 
-| Feature | Editorial | Bauhaus |
-|---------|-----------|---------|
-| **Color Palette** | Terracotta, sage green, dark grays | Red, yellow, blue primaries + black/white |
-| **Typography** | Inter (humanist sans-serif) | Montserrat (geometric sans-serif) |
-| **Visual Style** | Soft, rounded, editorial | Sharp, geometric, industrial |
-| **Layout** | Asymmetric magazine grid | Right-angle grid system |
-| **Shapes** | Rounded cards, soft shadows | Circles, squares, bold borders |
-| **Borders** | 1-2px subtle borders | 4-8px bold borders |
-| **Best Use** | Friendly documentation | Technical specifications |
-| **Tone** | Approachable, modern | Authoritative, precise |
+| Feature | Editorial | Bauhaus | Neumorphism |
+|---------|-----------|---------|-------------|
+| **Color Palette** | Terracotta, sage green, dark grays | Red, yellow, blue primaries + black/white | Monochromatic #E0E5EC (light gray-blue) |
+| **Typography** | Inter (humanist sans-serif) | Montserrat (geometric sans-serif) | Poppins (soft geometric sans-serif) |
+| **Visual Style** | Soft, rounded, editorial | Sharp, geometric, industrial | Clay-like, tactile, shadow-based depth |
+| **Layout** | Asymmetric magazine grid | Right-angle grid system | Symmetric grid with inset/extruded panels |
+| **Shapes** | Rounded cards, soft shadows | Circles, squares, bold borders | Rounded cards, dual shadows (no borders) |
+| **Borders** | 1-2px subtle borders | 4-8px bold borders | No borders (shadow-only depth) |
+| **Best Use** | Friendly documentation | Technical specifications | Dashboards, tools, focused interaction |
+| **Tone** | Approachable, modern | Authoritative, precise | Calm, tactile, minimal |
 
 ---
 
 ## Customization
 
-Both templates are fully customizable. Key customization points:
+All three templates are fully customizable. Key customization points:
 
 ### Color Tokens
 
@@ -122,6 +156,20 @@ Both templates are fully customizable. Key customization points:
 }
 ```
 
+**Neumorphism** (`template-neumorphism.html`):
+```css
+:root {
+  --neuro-bg: #E0E5EC;
+  --neuro-accent: #667EEA;
+  --shadow-light: -8px -8px 16px rgba(255, 255, 255, 0.8);
+  --shadow-dark: 8px 8px 16px rgba(163, 177, 198, 0.6);
+  --shadow-extruded: var(--shadow-light), var(--shadow-dark);
+  --shadow-pressed: inset -4px -4px 8px rgba(255, 255, 255, 0.5),
+                    inset 4px 4px 8px rgba(163, 177, 198, 0.4);
+  /* ... */
+}
+```
+
 ### Typography
 
 **Editorial:**
@@ -130,6 +178,10 @@ Both templates are fully customizable. Key customization points:
 
 **Bauhaus:**
 - Primary: Montserrat (Futura alternative)
+- Code: JetBrains Mono
+
+**Neumorphism:**
+- Primary: Poppins
 - Code: JetBrains Mono
 
 ### Spacing Scale
@@ -176,6 +228,7 @@ Both styles meet WCAG AA accessibility standards:
 ## Resources
 
 - **Bauhaus Design System:** See `bauhaus-style.md` for complete design tokens and component patterns
+- **Neumorphism Design System:** See `neumorphism-style.md` for shadow system, color palette, and UI patterns
 - **Editorial Guidelines:** (Coming soon)
 - **Custom Style Template:** (Coming soon)
 

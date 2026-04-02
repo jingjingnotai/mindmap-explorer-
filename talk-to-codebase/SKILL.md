@@ -26,11 +26,12 @@ An HTML file named `{repo-name}-guide.html` with:
 6. **Integration Points** — External services, APIs
 7. **Onboarding Path** — Suggested reading order
 
-**Design**: Two professional styles available:
+**Design**: Three professional styles available:
 - **Editorial** (default): Dark mode with warm terracotta/sage colors, magazine-style layout
 - **Bauhaus**: Industrial geometric design with red/yellow/blue primaries, bold shapes
+- **Neumorphism**: Soft UI with clay-like tactile interface, shadow-based depth, no hard borders
 
-Both styles follow UI/UX Pro Max principles — accessible (WCAG AA), responsive, keyboard-navigable, with semantic color tokens and optimized performance.
+All styles follow UI/UX Pro Max principles — accessible (WCAG AA), responsive, keyboard-navigable, with semantic color tokens and optimized performance.
 
 ## Workflow
 
@@ -61,7 +62,7 @@ Read in this order (stop after 5 minutes total):
 
 #### Choose Your Style
 
-Two design styles are available:
+Three design styles are available:
 
 1. **Editorial Style (Default)** — `template.html`
    - Warm editorial aesthetic with dark mode
@@ -77,15 +78,27 @@ Two design styles are available:
    - Strong contrast and hierarchy
    - See `references/bauhaus-style.md` for full design system
 
+3. **Neumorphism Style (Soft UI)** — `template-neumorphism.html`
+   - Clay-like tactile interface with shadow-based depth
+   - Monochromatic #E0E5EC background
+   - Extruded shadows for raised elements, pressed shadows for insets
+   - No hard borders, all rounded corners
+   - Poppins font with soft geometric letterforms
+   - Light source from top-left creates dual shadows
+   - See `references/neumorphism-style.md` for full design system
+
 **Default:** If user doesn't specify, use `template.html` (editorial style).
 
-**If user specifies style:** Look for keywords like "Bauhaus", "geometric", "industrial", "primary colors", "red/yellow/blue" → use `template-bauhaus.html`.
+**If user specifies style:** 
+- Keywords like "Bauhaus", "geometric", "industrial", "primary colors", "red/yellow/blue" → use `template-bauhaus.html`
+- Keywords like "neumorphism", "soft UI", "clay", "tactile", "extruded", "pressed" → use `template-neumorphism.html`
 
 #### Generation Steps
 
 1. Read the appropriate template file:
    - Editorial: `~/.claude/skills/talk-to-codebase/template.html`
    - Bauhaus: `~/.claude/skills/talk-to-codebase/template-bauhaus.html`
+   - Neumorphism: `~/.claude/skills/talk-to-codebase/template-neumorphism.html`
 2. Replace placeholders with actual data from exploration:
 
 **Required Placeholders**:
