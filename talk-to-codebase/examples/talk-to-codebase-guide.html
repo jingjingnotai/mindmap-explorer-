@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>talk-to-codebase — Codebase Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Neumorphism Design System */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Neumorphism Colors */
+      --neuro-bg: #E0E5EC;
+      --neuro-surface: #E0E5EC;
+      --neuro-text-primary: #2C3E50;
+      --neuro-text-secondary: #5F6C7B;
+      --neuro-text-tertiary: #8B95A4;
+      --neuro-accent: #667EEA;
+      --neuro-accent-light: #7F94FF;
+      --neuro-success: #48BB78;
+      --neuro-warning: #F6AD55;
+      --neuro-error: #F56565;
+
+      /* Shadows — Light source from top-left */
+      --shadow-light: -8px -8px 16px rgba(255, 255, 255, 0.8);
+      --shadow-dark: 8px 8px 16px rgba(163, 177, 198, 0.6);
+      --shadow-inset-light: inset -4px -4px 8px rgba(255, 255, 255, 0.5);
+      --shadow-inset-dark: inset 4px 4px 8px rgba(163, 177, 198, 0.4);
+
+      /* Combined shadows for extruded effect */
+      --shadow-extruded: var(--shadow-light), var(--shadow-dark);
+      --shadow-pressed: var(--shadow-inset-light), var(--shadow-inset-dark);
+      --shadow-flat: -4px -4px 8px rgba(255, 255, 255, 0.5), 4px 4px 8px rgba(163, 177, 198, 0.4);
+
+      /* Typography */
+      --font-primary: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      --text-xs: 0.75rem;
+      --text-sm: 0.875rem;
+      --text-base: 1rem;
+      --text-lg: 1.125rem;
+      --text-xl: 1.5rem;
+      --text-2xl: 2rem;
+      --text-3xl: 2.5rem;
+
+      /* Spacing (8pt grid) */
+      --space-1: 8px;
+      --space-2: 16px;
+      --space-3: 24px;
+      --space-4: 32px;
+      --space-5: 40px;
+      --space-6: 48px;
+      --space-8: 64px;
+
+      /* Border Radius */
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --radius-full: 9999px;
+    }
+
+    html { scroll-behavior: smooth; font-size: 16px; }
+
+    body {
+      font-family: var(--font-primary);
+      background: var(--neuro-bg);
+      color: var(--neuro-text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Skip Link */
+    .skip-link {
+      position: absolute;
+      top: -50px;
+      left: 0;
+      background: var(--neuro-accent);
+      color: white;
+      padding: var(--space-1) var(--space-2);
+      text-decoration: none;
+      border-radius: var(--radius-md);
+      z-index: 1000;
+      box-shadow: var(--shadow-extruded);
+    }
+    .skip-link:focus { top: var(--space-2); }
+
+    /* Header — Soft Elevated */
+    header {
+      background: var(--neuro-bg);
+      padding: var(--space-4) var(--space-3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-flat);
+      border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    }
+
+    header h1 {
+      font-size: var(--text-3xl);
+      font-weight: 700;
+      color: var(--neuro-text-primary);
+      margin-bottom: var(--space-1);
+      text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5), -2px -2px 4px rgba(163, 177, 198, 0.3);
+    }
+
+    header .subtitle {
+      font-size: var(--text-sm);
+      color: var(--neuro-text-secondary);
+      font-weight: 500;
+    }
+
+    /* Navigation — Soft Sidebar */
+    nav {
+      background: var(--neuro-bg);
+      padding: var(--space-2);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-pressed);
+      position: sticky;
+      top: 140px;
+      height: calc(100vh - 160px);
+      overflow-y: auto;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: var(--space-2);
+    }
+
+    nav li {
+      margin-bottom: var(--space-1);
+    }
+
+    nav a {
+      display: block;
+      padding: var(--space-2);
+      color: var(--neuro-text-secondary);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: var(--text-sm);
+      border-radius: var(--radius-md);
+      transition: all 200ms ease;
+    }
+
+    nav a:hover,
+    nav a:focus {
+      color: var(--neuro-accent);
+      box-shadow: var(--shadow-extruded);
+      transform: translateY(-2px);
+    }
+
+    nav a.active {
+      color: var(--neuro-accent);
+      box-shadow: var(--shadow-pressed);
+    }
+
+    /* Layout */
+    .container {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      max-width: 1600px;
+      margin: 0 auto;
+      gap: var(--space-4);
+      padding: var(--space-4);
+    }
+
+    main {
+      padding: var(--space-4);
+      background: var(--neuro-bg);
+    }
+
+    /* Section Headers */
+    section {
+      margin-bottom: var(--space-8);
+    }
+
+    section h2 {
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      color: var(--neuro-text-primary);
+      margin-bottom: var(--space-4);
+      padding: var(--space-3);
+      background: var(--neuro-bg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-extruded);
+      text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5), -2px -2px 4px rgba(163, 177, 198, 0.2);
+    }
+
+    /* Cards — Extruded Clay-like */
+    .card {
+      background: var(--neuro-bg);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      margin-bottom: var(--space-3);
+      box-shadow: var(--shadow-extruded);
+      transition: all 300ms ease;
+    }
+
+    .card:hover {
+      box-shadow: -12px -12px 20px rgba(255, 255, 255, 0.9),
+                  12px 12px 20px rgba(163, 177, 198, 0.7);
+      transform: translateY(-4px);
+    }
+
+    .card h3,
+    .card h4 {
+      font-weight: 600;
+      margin-bottom: var(--space-2);
+      color: var(--neuro-text-primary);
+    }
+
+    .card h3 { font-size: var(--text-xl); }
+    .card h4 { font-size: var(--text-lg); }
+
+    .card p {
+      color: var(--neuro-text-secondary);
+      line-height: 1.7;
+    }
+
+    .card ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .card li {
+      padding: var(--space-2) 0;
+      color: var(--neuro-text-secondary);
+      position: relative;
+      padding-left: var(--space-4);
+    }
+
+    .card li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 8px;
+      background: var(--neuro-accent);
+      border-radius: 50%;
+      box-shadow: var(--shadow-flat);
+    }
+
+    /* Card Grid */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+
+    /* Meta Info — Soft Badges */
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+    }
+
+    .meta-item {
+      background: var(--neuro-bg);
+      padding: var(--space-3);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-pressed);
+    }
+
+    .meta-label {
+      font-size: var(--text-xs);
+      font-weight: 600;
+      color: var(--neuro-text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: var(--space-1);
+    }
+
+    .meta-value {
+      font-size: var(--text-base);
+      font-weight: 600;
+      color: var(--neuro-text-primary);
+    }
+
+    /* Flow Diagram — Soft Connected */
+    .flow {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-4);
+      background: var(--neuro-bg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-pressed);
+      margin-bottom: var(--space-4);
+      overflow-x: auto;
+    }
+
+    .flow-step {
+      background: var(--neuro-bg);
+      border-radius: var(--radius-md);
+      padding: var(--space-3);
+      min-width: 180px;
+      text-align: center;
+      font-weight: 600;
+      font-size: var(--text-sm);
+      color: var(--neuro-text-primary);
+      box-shadow: var(--shadow-extruded);
+    }
+
+    .flow-arrow {
+      font-size: var(--text-2xl);
+      font-weight: 700;
+      color: var(--neuro-accent);
+    }
+
+    /* Table — Soft Structure */
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: var(--neuro-bg);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-extruded);
+      margin-bottom: var(--space-4);
+      overflow: hidden;
+    }
+
+    thead {
+      background: var(--neuro-bg);
+    }
+
+    th {
+      padding: var(--space-3);
+      text-align: left;
+      font-weight: 600;
+      color: var(--neuro-text-primary);
+      font-size: var(--text-sm);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: var(--shadow-pressed);
+    }
+
+    td {
+      padding: var(--space-3);
+      color: var(--neuro-text-secondary);
+      border-top: 1px solid rgba(163, 177, 198, 0.2);
+    }
+
+    tbody tr:hover {
+      background: rgba(102, 126, 234, 0.05);
+    }
+
+    /* Code — Soft Inset */
+    code {
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      background: var(--neuro-bg);
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      font-size: var(--text-sm);
+      color: var(--neuro-accent);
+      box-shadow: var(--shadow-pressed);
+    }
+
+    pre {
+      background: var(--neuro-bg);
+      padding: var(--space-4);
+      overflow-x: auto;
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-3);
+      box-shadow: var(--shadow-pressed);
+    }
+
+    pre code {
+      background: transparent;
+      box-shadow: none;
+      color: var(--neuro-text-primary);
+    }
+
+    /* Badge — Soft Pills */
+    .badge {
+      display: inline-block;
+      padding: 6px 16px;
+      font-size: var(--text-xs);
+      font-weight: 600;
+      border-radius: var(--radius-full);
+      background: var(--neuro-bg);
+      color: var(--neuro-accent);
+      margin-right: var(--space-1);
+      margin-bottom: var(--space-1);
+      box-shadow: var(--shadow-extruded);
+    }
+
+    .badge-yellow { color: var(--neuro-warning); }
+    .badge-blue { color: var(--neuro-accent); }
+
+    /* Priority Indicators */
+    .priority-high::before,
+    .priority-medium::before,
+    .priority-low::before {
+      content: '';
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: var(--space-2);
+      box-shadow: var(--shadow-extruded);
+    }
+
+    .priority-high::before { background: var(--neuro-error); }
+    .priority-medium::before { background: var(--neuro-warning); }
+    .priority-low::before { background: var(--neuro-success); }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+
+      nav {
+        position: static;
+        height: auto;
+        margin-bottom: var(--space-4);
+      }
+
+      .flow {
+        flex-direction: column;
+      }
+
+      .flow-arrow {
+        transform: rotate(90deg);
+      }
+    }
+
+    /* Accessibility */
+    *:focus-visible {
+      outline: 3px solid var(--neuro-accent);
+      outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* Print Styles */
+    @media print {
+      nav { display: none; }
+      .container { grid-template-columns: 1fr; }
+      header { position: static; }
+      * { box-shadow: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to Main Content</a>
+
+  <header role="banner">
+    <h1>talk-to-codebase</h1>
+    <p class="subtitle">Codebase Documentation Guide</p>
+    <p class="subtitle">Generated: April 1, 2026</p>
+  </header>
+
+  <div class="container">
+    <nav role="navigation" aria-label="Table of Contents">
+      <ul>
+        <li><a href="#overview">01 Overview</a></li>
+        <li><a href="#pe-questions">02 Key Questions</a></li>
+        <li><a href="#architecture">03 Architecture</a></li>
+        <li><a href="#flows">04 Core Flows</a></li>
+        <li><a href="#files">05 Key Files</a></li>
+        <li><a href="#data">06 Data Layer</a></li>
+        <li><a href="#integrations">07 Integrations</a></li>
+        <li><a href="#onboarding">08 Onboarding</a></li>
+      </ul>
+    </nav>
+
+    <main id="main-content" role="main">
+      <!-- Overview Section -->
+      <section id="overview">
+        <h2>Overview</h2>
+
+        <div class="meta">
+          <div class="meta-item">
+            <div class="meta-label">Language</div>
+            <div class="meta-value">Markdown / HTML</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">System Type</div>
+            <div class="meta-value">CLI Tool / Skill</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Framework</div>
+            <div class="meta-value">Claude Code Skill</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Entry Point</div>
+            <div class="meta-value">SKILL.md</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Lines of Code</div>
+            <div class="meta-value">~2,850</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Database</div>
+            <div class="meta-value">None (File-based)</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>What It Does</h3>
+          <p>A Claude Code skill that generates professional HTML codebase guides in under 2 minutes, helping developers understand 80% of any codebase in 30 minutes through structured documentation including overview, Principal Engineer's architectural questions, core flows, key files, and onboarding paths. Supports three visual styles: Editorial, Bauhaus, and Neumorphism.</p>
+        </div>
+
+        <div class="card">
+          <h3>Tech Stack</h3>
+          <div>
+            <span class="badge">Markdown</span>
+            <span class="badge badge-yellow">HTML5 Templates</span>
+            <span class="badge badge-blue">CSS3 (Neumorphism)</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Principal Engineer's Questions Section -->
+      <section id="pe-questions">
+        <h2>Principal Engineer's Questions</h2>
+        <p style="margin-bottom: 2rem; color: var(--neuro-text-secondary);">
+          Five critical questions that help you understand the architectural decisions, constraints, and operational characteristics of this system.
+        </p>
+
+        <div class="card">
+          <h4>What problem does this solve, and for whom?</h4>
+          <ul>
+            <li><strong>Problem:</strong> Developers waste hours understanding unfamiliar codebases, reading hundreds of files without a clear roadmap</li>
+            <li><strong>Users:</strong> Software engineers onboarding to new projects, teams documenting microservices, developers maintaining legacy systems</li>
+            <li><strong>Value:</strong> Reduces onboarding time from days to hours by providing structured architectural overview and guided reading paths</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h4>How does data flow through the system?</h4>
+          <ul>
+            <li><strong>Entry:</strong> User invokes <code>/talk-to-codebase</code> command in Claude Code CLI</li>
+            <li><strong>Processing:</strong> Skill reads SKILL.md → explores codebase (5-6 key files) → loads template → performs string substitution</li>
+            <li><strong>Storage:</strong> Writes generated HTML file to local filesystem (<code>{repo-name}-guide.html</code>)</li>
+            <li><strong>Guarantees:</strong> Synchronous execution, deterministic output, no external dependencies or network calls</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h4>Where are the failure modes and how are they handled?</h4>
+          <ul>
+            <li><strong>Missing Files:</strong> No explicit error handling for missing templates or unreadable codebase files (skill assumes files exist)</li>
+            <li><strong>Invalid Input:</strong> Gracefully degrades if codebase structure is unclear (uses README + directory structure)</li>
+            <li><strong>Template Errors:</strong> String substitution failures would result in placeholders appearing in output HTML</li>
+            <li><strong>Recovery:</strong> No retry logic; user must re-run command manually if generation fails</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h4>What are the coupling points and can they be reduced?</h4>
+          <ul>
+            <li><strong>Tight Coupling:</strong> SKILL.md is tightly coupled to template placeholders (36 required placeholders must match exactly)</li>
+            <li><strong>Template Independence:</strong> Three templates (Editorial, Bauhaus, Neumorphism) are independent — can add/remove styles without affecting others</li>
+            <li><strong>Framework Dependency:</strong> Hard dependency on Claude Code skill framework for invocation and file system access</li>
+            <li><strong>Reduction Opportunity:</strong> Could introduce validation layer to check template-placeholder compatibility before generation</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h4>How does this scale, and what are the bottlenecks?</h4>
+          <ul>
+            <li><strong>Scaling:</strong> Single-user CLI tool with no concurrency requirements; designed for local development use</li>
+            <li><strong>Bottleneck:</strong> Limited to reading 5-6 files by design (speed constraint) — larger codebases get approximated views</li>
+            <li><strong>Performance:</strong> Target is sub-2-minute generation time; no caching or optimization beyond limiting file reads</li>
+            <li><strong>Constraint:</strong> Template file size (~18KB-32KB) loaded on every invocation — acceptable for CLI tool usage pattern</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Architecture Section -->
+      <section id="architecture">
+        <h2>Architecture</h2>
+
+        <div class="card">
+          <h4>Template Layer</h4>
+          <ul>
+            <li><code>template.html</code> — Editorial style (dark mode, terracotta/sage accents)</li>
+            <li><code>template-bauhaus.html</code> — Industrial geometric design (red/yellow/blue primaries)</li>
+            <li><code>template-neumorphism.html</code> — Soft UI with clay-like tactile interface</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h4>Skill Definition Layer</h4>
+          <ul>
+            <li><code>SKILL.md</code> — Main skill logic: exploration workflow, template selection, placeholder mapping</li>
+            <li><code>references/</code> — Design system documentation (bauhaus-style.md, neumorphism-style.md)</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h4>Execution Flow</h4>
+          <ul>
+            <li>Claude Code harness invokes skill based on user command</li>
+            <li>Skill performs fast exploration (ls, find, selective file reads)</li>
+            <li>Template selection based on user keywords (default: editorial)</li>
+            <li>String substitution for 36+ placeholders</li>
+            <li>Write HTML output to local filesystem</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Core Flows Section -->
+      <section id="flows">
+        <h2>Core Flows</h2>
+
+        <div class="card">
+          <h3>Main Request Flow</h3>
+          <div class="flow">
+            <div class="flow-step">User runs /talk-to-codebase</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">Explore codebase</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">Load & substitute template</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">Write HTML output</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Template Selection Flow</h3>
+          <ul>
+            <li>Parse user arguments for style keywords ("neumorphism", "bauhaus", "editorial")</li>
+            <li>Default to Editorial style if no keywords detected</li>
+            <li>Read corresponding template file from <code>~/.claude/skills/talk-to-codebase/</code></li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Codebase Exploration Flow</h3>
+          <ul>
+            <li>Check directory structure with <code>ls -la</code></li>
+            <li>Find documentation files (README, SKILL.md, package.json)</li>
+            <li>Read maximum 5-6 key files (entry point, core logic, README)</li>
+            <li>Infer architecture from file names and structure</li>
+            <li>Gather answers to Principal Engineer's 5 questions</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Key Files Section -->
+      <section id="files">
+        <h2>Key Files</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Priority</th>
+              <th>File</th>
+              <th>Purpose</th>
+              <th>Why Important</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="priority-high">
+              <td>Critical</td>
+              <td><code>SKILL.md</code></td>
+              <td>Main skill definition and workflow</td>
+              <td>Defines exploration strategy, template selection, placeholder mapping</td>
+            </tr>
+            <tr class="priority-high">
+              <td>Critical</td>
+              <td><code>template-neumorphism.html</code></td>
+              <td>Neumorphism style HTML template</td>
+              <td>Clay-like UI with shadow-based depth, monochromatic palette</td>
+            </tr>
+            <tr class="priority-high">
+              <td>Critical</td>
+              <td><code>template-bauhaus.html</code></td>
+              <td>Bauhaus style HTML template</td>
+              <td>Industrial geometric design with red/yellow/blue primaries</td>
+            </tr>
+            <tr class="priority-medium">
+              <td>Important</td>
+              <td><code>template.html</code></td>
+              <td>Editorial style HTML template (default)</td>
+              <td>Dark mode with terracotta/sage accents, magazine-style layout</td>
+            </tr>
+            <tr class="priority-medium">
+              <td>Important</td>
+              <td><code>README.md</code></td>
+              <td>Installation and usage documentation</td>
+              <td>Explains quick start, features, marketplace installation</td>
+            </tr>
+            <tr class="priority-low">
+              <td>Reference</td>
+              <td><code>references/bauhaus-style.md</code></td>
+              <td>Bauhaus design system documentation</td>
+              <td>Complete design tokens and component patterns for Bauhaus template</td>
+            </tr>
+            <tr class="priority-low">
+              <td>Reference</td>
+              <td><code>references/neumorphism-style.md</code></td>
+              <td>Neumorphism design system documentation</td>
+              <td>Shadow system, color palette, and UI patterns for soft UI</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Data Layer Section -->
+      <section id="data">
+        <h2>Data Layer</h2>
+
+        <div class="card">
+          <h4>No Persistent Storage</h4>
+          <p>This is a stateless CLI tool with no database or persistent storage. All data flows through:</p>
+          <ul>
+            <li><strong>Input:</strong> Local filesystem (codebase files read via Claude Code file access)</li>
+            <li><strong>Processing:</strong> In-memory string operations (template loading and substitution)</li>
+            <li><strong>Output:</strong> Single HTML file written to local filesystem (<code>{repo-name}-guide.html</code>)</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h4>Template Storage</h4>
+          <ul>
+            <li>Templates stored as static HTML files in <code>~/.claude/skills/talk-to-codebase/</code></li>
+            <li>No database schema or migrations required</li>
+            <li>Templates are versioned via git (not runtime versioning)</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Integration Points Section -->
+      <section id="integrations">
+        <h2>Integration Points</h2>
+
+        <div class="card">
+          <h4>Claude Code Framework</h4>
+          <ul>
+            <li><strong>Skill Invocation:</strong> Registered via SKILL.md frontmatter (<code>name: talk-to-codebase</code>)</li>
+            <li><strong>File System Access:</strong> Uses Claude Code's Read and Write tools for file operations</li>
+            <li><strong>Command Parsing:</strong> Receives user arguments via skill framework</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h4>External Dependencies</h4>
+          <ul>
+            <li><strong>None:</strong> No npm packages, Python libraries, or external services</li>
+            <li><strong>Web Fonts:</strong> Templates reference Google Fonts (Poppins, Inter, Montserrat) via CDN</li>
+            <li><strong>Fallback:</strong> Font stack includes system fonts as fallback</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h4>GitHub Repository</h4>
+          <ul>
+            <li><strong>Source:</strong> <code>github.com/jingjingnotai/mindmap-explorer-/tree/main/talk-to-codebase</code></li>
+            <li><strong>Installation:</strong> Users can install via Claude Code marketplace or manual git clone</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Onboarding Section -->
+      <section id="onboarding">
+        <h2>Onboarding Path</h2>
+
+        <div class="card">
+          <h3>Suggested Reading Order</h3>
+          <ol style="list-style: decimal; padding-left: var(--space-6);">
+            <li style="margin-bottom: var(--space-2);">Start with README.md to understand project purpose</li>
+            <li style="margin-bottom: var(--space-2);">Review main entry point: <code>SKILL.md</code></li>
+            <li style="margin-bottom: var(--space-2);">Study core request flow and key components</li>
+            <li style="margin-bottom: var(--space-2);">Explore data models and integration points</li>
+            <li style="margin-bottom: var(--space-2);">Run tests and validate local setup</li>
+          </ol>
+        </div>
+
+        <div class="card">
+          <h3>Day 1: Understanding the Workflow</h3>
+          <ul>
+            <li>Read <code>README.md</code> for installation and quick start</li>
+            <li>Read <code>SKILL.md</code> sections: "When to Use", "Workflow", "Important Rules"</li>
+            <li>Try generating a guide: <code>/talk-to-codebase . neumorphism style</code></li>
+            <li>Open generated HTML to see output format</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Week 1: Exploring Templates</h3>
+          <ul>
+            <li>Compare all three templates: <code>template.html</code>, <code>template-bauhaus.html</code>, <code>template-neumorphism.html</code></li>
+            <li>Read design system documentation in <code>references/</code></li>
+            <li>Understand placeholder substitution system (36 required placeholders)</li>
+            <li>Practice customizing templates by modifying CSS variables</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h3>Contributing</h3>
+          <ul>
+            <li>Fork the repository and create a feature branch</li>
+            <li>To add a new style: copy an existing template, modify CSS, update SKILL.md references</li>
+            <li>Test your changes by generating guides for different codebases</li>
+            <li>Submit a PR with examples and documentation updates</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Smooth scroll for navigation links
+    document.querySelectorAll('nav a').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href').slice(1);
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Highlight active section in navigation
+    const observerOptions = {
+      root: null,
+      rootMargin: '-20% 0px -70% 0px',
+      threshold: 0
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          document.querySelectorAll('nav a').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === `#${id}`) {
+              link.classList.add('active');
+            }
+          });
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('section[id]').forEach(section => {
+      observer.observe(section);
+    });
+  </script>
+</body>
+</html>

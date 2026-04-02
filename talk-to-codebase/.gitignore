@@ -9,6 +9,7 @@ Thumbs.db
 *.swo
 *~
 
-# Test outputs
+# Test outputs (exclude from root, but allow in examples/)
 *-guide.html
+!examples/*-guide.html
 test-output/
